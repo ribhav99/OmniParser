@@ -1,0 +1,2649 @@
+Project Path: OmniParser
+
+Source Tree:
+
+```
+OmniParser
+├── setup.sh
+├── LICENSE
+├── requirements.txt
+├── util
+│   ├── action_type.py
+│   ├── __init__.py
+│   ├── box_annotator.py
+│   └── action_matching.py
+├── imgs
+│   ├── omni3.jpg
+│   ├── windows_home.png
+│   ├── onenote.png
+│   ├── excel.png
+│   ├── logo.png
+│   ├── windows_multitab.png
+│   ├── ios.png
+│   ├── saved_image_demo.png
+│   ├── word.png
+│   └── google_page.png
+├── weights
+│   ├── convert_safetensor_to_pt.py
+│   ├── config.json
+│   ├── train_args.yaml
+│   └── README.md
+├── demo.ipynb
+├── README.md
+├── utils.py
+├── new_requirements.txt
+├── omniparser.py
+├── gradio_demo.py
+├── venv
+├── demo.py
+└── SECURITY.md
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/setup.sh`:
+
+```sh
+#!/bin/bash
+apt update
+apt upgrade -y
+apt install -y software-properties-common build-essential libssl-dev zlib1g-dev libncurses5-dev libncursesw5-dev libreadline-dev libsqlite3-dev libgdbm-dev libdb5.3-dev libbz2-dev libexpat1-dev liblzma-dev tk-dev libffi-dev
+apt install -y python3.12 python3.12-venv python3.12-dev
+apt install git-lfs
+git clone https://github.com/ribhav99/OmniParser.git
+mkdir temp
+cd temp
+git clone https://huggingface.co/microsoft/OmniParser
+cd ..
+mv temp/OmniParser/* OmniParser/weights
+cd OmniParser
+python3.12 -m venv venv
+source venv/bin/activate
+pip install uv
+uv pip install -r new_requirements.txt
+cd ..
+rm -rf temp
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/LICENSE`:
+
+```
+Attribution 4.0 International
+
+=======================================================================
+
+Creative Commons Corporation ("Creative Commons") is not a law firm and
+does not provide legal services or legal advice. Distribution of
+Creative Commons public licenses does not create a lawyer-client or
+other relationship. Creative Commons makes its licenses and related
+information available on an "as-is" basis. Creative Commons gives no
+warranties regarding its licenses, any material licensed under their
+terms and conditions, or any related information. Creative Commons
+disclaims all liability for damages resulting from their use to the
+fullest extent possible.
+
+Using Creative Commons Public Licenses
+
+Creative Commons public licenses provide a standard set of terms and
+conditions that creators and other rights holders may use to share
+original works of authorship and other material subject to copyright
+and certain other rights specified in the public license below. The
+following considerations are for informational purposes only, are not
+exhaustive, and do not form part of our licenses.
+
+     Considerations for licensors: Our public licenses are
+     intended for use by those authorized to give the public
+     permission to use material in ways otherwise restricted by
+     copyright and certain other rights. Our licenses are
+     irrevocable. Licensors should read and understand the terms
+     and conditions of the license they choose before applying it.
+     Licensors should also secure all rights necessary before
+     applying our licenses so that the public can reuse the
+     material as expected. Licensors should clearly mark any
+     material not subject to the license. This includes other CC-
+     licensed material, or material used under an exception or
+     limitation to copyright. More considerations for licensors:
+	wiki.creativecommons.org/Considerations_for_licensors
+
+     Considerations for the public: By using one of our public
+     licenses, a licensor grants the public permission to use the
+     licensed material under specified terms and conditions. If
+     the licensor's permission is not necessary for any reason--for
+     example, because of any applicable exception or limitation to
+     copyright--then that use is not regulated by the license. Our
+     licenses grant only permissions under copyright and certain
+     other rights that a licensor has authority to grant. Use of
+     the licensed material may still be restricted for other
+     reasons, including because others have copyright or other
+     rights in the material. A licensor may make special requests,
+     such as asking that all changes be marked or described.
+     Although not required by our licenses, you are encouraged to
+     respect those requests where reasonable. More_considerations
+     for the public:
+	wiki.creativecommons.org/Considerations_for_licensees
+
+=======================================================================
+
+Creative Commons Attribution 4.0 International Public License
+
+By exercising the Licensed Rights (defined below), You accept and agree
+to be bound by the terms and conditions of this Creative Commons
+Attribution 4.0 International Public License ("Public License"). To the
+extent this Public License may be interpreted as a contract, You are
+granted the Licensed Rights in consideration of Your acceptance of
+these terms and conditions, and the Licensor grants You such rights in
+consideration of benefits the Licensor receives from making the
+Licensed Material available under these terms and conditions.
+
+
+Section 1 -- Definitions.
+
+  a. Adapted Material means material subject to Copyright and Similar
+     Rights that is derived from or based upon the Licensed Material
+     and in which the Licensed Material is translated, altered,
+     arranged, transformed, or otherwise modified in a manner requiring
+     permission under the Copyright and Similar Rights held by the
+     Licensor. For purposes of this Public License, where the Licensed
+     Material is a musical work, performance, or sound recording,
+     Adapted Material is always produced where the Licensed Material is
+     synched in timed relation with a moving image.
+
+  b. Adapter's License means the license You apply to Your Copyright
+     and Similar Rights in Your contributions to Adapted Material in
+     accordance with the terms and conditions of this Public License.
+
+  c. Copyright and Similar Rights means copyright and/or similar rights
+     closely related to copyright including, without limitation,
+     performance, broadcast, sound recording, and Sui Generis Database
+     Rights, without regard to how the rights are labeled or
+     categorized. For purposes of this Public License, the rights
+     specified in Section 2(b)(1)-(2) are not Copyright and Similar
+     Rights.
+
+  d. Effective Technological Measures means those measures that, in the
+     absence of proper authority, may not be circumvented under laws
+     fulfilling obligations under Article 11 of the WIPO Copyright
+     Treaty adopted on December 20, 1996, and/or similar international
+     agreements.
+
+  e. Exceptions and Limitations means fair use, fair dealing, and/or
+     any other exception or limitation to Copyright and Similar Rights
+     that applies to Your use of the Licensed Material.
+
+  f. Licensed Material means the artistic or literary work, database,
+     or other material to which the Licensor applied this Public
+     License.
+
+  g. Licensed Rights means the rights granted to You subject to the
+     terms and conditions of this Public License, which are limited to
+     all Copyright and Similar Rights that apply to Your use of the
+     Licensed Material and that the Licensor has authority to license.
+
+  h. Licensor means the individual(s) or entity(ies) granting rights
+     under this Public License.
+
+  i. Share means to provide material to the public by any means or
+     process that requires permission under the Licensed Rights, such
+     as reproduction, public display, public performance, distribution,
+     dissemination, communication, or importation, and to make material
+     available to the public including in ways that members of the
+     public may access the material from a place and at a time
+     individually chosen by them.
+
+  j. Sui Generis Database Rights means rights other than copyright
+     resulting from Directive 96/9/EC of the European Parliament and of
+     the Council of 11 March 1996 on the legal protection of databases,
+     as amended and/or succeeded, as well as other essentially
+     equivalent rights anywhere in the world.
+
+  k. You means the individual or entity exercising the Licensed Rights
+     under this Public License. Your has a corresponding meaning.
+
+
+Section 2 -- Scope.
+
+  a. License grant.
+
+       1. Subject to the terms and conditions of this Public License,
+          the Licensor hereby grants You a worldwide, royalty-free,
+          non-sublicensable, non-exclusive, irrevocable license to
+          exercise the Licensed Rights in the Licensed Material to:
+
+            a. reproduce and Share the Licensed Material, in whole or
+               in part; and
+
+            b. produce, reproduce, and Share Adapted Material.
+
+       2. Exceptions and Limitations. For the avoidance of doubt, where
+          Exceptions and Limitations apply to Your use, this Public
+          License does not apply, and You do not need to comply with
+          its terms and conditions.
+
+       3. Term. The term of this Public License is specified in Section
+          6(a).
+
+       4. Media and formats; technical modifications allowed. The
+          Licensor authorizes You to exercise the Licensed Rights in
+          all media and formats whether now known or hereafter created,
+          and to make technical modifications necessary to do so. The
+          Licensor waives and/or agrees not to assert any right or
+          authority to forbid You from making technical modifications
+          necessary to exercise the Licensed Rights, including
+          technical modifications necessary to circumvent Effective
+          Technological Measures. For purposes of this Public License,
+          simply making modifications authorized by this Section 2(a)
+          (4) never produces Adapted Material.
+
+       5. Downstream recipients.
+
+            a. Offer from the Licensor -- Licensed Material. Every
+               recipient of the Licensed Material automatically
+               receives an offer from the Licensor to exercise the
+               Licensed Rights under the terms and conditions of this
+               Public License.
+
+            b. No downstream restrictions. You may not offer or impose
+               any additional or different terms or conditions on, or
+               apply any Effective Technological Measures to, the
+               Licensed Material if doing so restricts exercise of the
+               Licensed Rights by any recipient of the Licensed
+               Material.
+
+       6. No endorsement. Nothing in this Public License constitutes or
+          may be construed as permission to assert or imply that You
+          are, or that Your use of the Licensed Material is, connected
+          with, or sponsored, endorsed, or granted official status by,
+          the Licensor or others designated to receive attribution as
+          provided in Section 3(a)(1)(A)(i).
+
+  b. Other rights.
+
+       1. Moral rights, such as the right of integrity, are not
+          licensed under this Public License, nor are publicity,
+          privacy, and/or other similar personality rights; however, to
+          the extent possible, the Licensor waives and/or agrees not to
+          assert any such rights held by the Licensor to the limited
+          extent necessary to allow You to exercise the Licensed
+          Rights, but not otherwise.
+
+       2. Patent and trademark rights are not licensed under this
+          Public License.
+
+       3. To the extent possible, the Licensor waives any right to
+          collect royalties from You for the exercise of the Licensed
+          Rights, whether directly or through a collecting society
+          under any voluntary or waivable statutory or compulsory
+          licensing scheme. In all other cases the Licensor expressly
+          reserves any right to collect such royalties.
+
+
+Section 3 -- License Conditions.
+
+Your exercise of the Licensed Rights is expressly made subject to the
+following conditions.
+
+  a. Attribution.
+
+       1. If You Share the Licensed Material (including in modified
+          form), You must:
+
+            a. retain the following if it is supplied by the Licensor
+               with the Licensed Material:
+
+                 i. identification of the creator(s) of the Licensed
+                    Material and any others designated to receive
+                    attribution, in any reasonable manner requested by
+                    the Licensor (including by pseudonym if
+                    designated);
+
+                ii. a copyright notice;
+
+               iii. a notice that refers to this Public License;
+
+                iv. a notice that refers to the disclaimer of
+                    warranties;
+
+                 v. a URI or hyperlink to the Licensed Material to the
+                    extent reasonably practicable;
+
+            b. indicate if You modified the Licensed Material and
+               retain an indication of any previous modifications; and
+
+            c. indicate the Licensed Material is licensed under this
+               Public License, and include the text of, or the URI or
+               hyperlink to, this Public License.
+
+       2. You may satisfy the conditions in Section 3(a)(1) in any
+          reasonable manner based on the medium, means, and context in
+          which You Share the Licensed Material. For example, it may be
+          reasonable to satisfy the conditions by providing a URI or
+          hyperlink to a resource that includes the required
+          information.
+
+       3. If requested by the Licensor, You must remove any of the
+          information required by Section 3(a)(1)(A) to the extent
+          reasonably practicable.
+
+       4. If You Share Adapted Material You produce, the Adapter's
+          License You apply must not prevent recipients of the Adapted
+          Material from complying with this Public License.
+
+
+Section 4 -- Sui Generis Database Rights.
+
+Where the Licensed Rights include Sui Generis Database Rights that
+apply to Your use of the Licensed Material:
+
+  a. for the avoidance of doubt, Section 2(a)(1) grants You the right
+     to extract, reuse, reproduce, and Share all or a substantial
+     portion of the contents of the database;
+
+  b. if You include all or a substantial portion of the database
+     contents in a database in which You have Sui Generis Database
+     Rights, then the database in which You have Sui Generis Database
+     Rights (but not its individual contents) is Adapted Material; and
+
+  c. You must comply with the conditions in Section 3(a) if You Share
+     all or a substantial portion of the contents of the database.
+
+For the avoidance of doubt, this Section 4 supplements and does not
+replace Your obligations under this Public License where the Licensed
+Rights include other Copyright and Similar Rights.
+
+
+Section 5 -- Disclaimer of Warranties and Limitation of Liability.
+
+  a. UNLESS OTHERWISE SEPARATELY UNDERTAKEN BY THE LICENSOR, TO THE
+     EXTENT POSSIBLE, THE LICENSOR OFFERS THE LICENSED MATERIAL AS-IS
+     AND AS-AVAILABLE, AND MAKES NO REPRESENTATIONS OR WARRANTIES OF
+     ANY KIND CONCERNING THE LICENSED MATERIAL, WHETHER EXPRESS,
+     IMPLIED, STATUTORY, OR OTHER. THIS INCLUDES, WITHOUT LIMITATION,
+     WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR A PARTICULAR
+     PURPOSE, NON-INFRINGEMENT, ABSENCE OF LATENT OR OTHER DEFECTS,
+     ACCURACY, OR THE PRESENCE OR ABSENCE OF ERRORS, WHETHER OR NOT
+     KNOWN OR DISCOVERABLE. WHERE DISCLAIMERS OF WARRANTIES ARE NOT
+     ALLOWED IN FULL OR IN PART, THIS DISCLAIMER MAY NOT APPLY TO YOU.
+
+  b. TO THE EXTENT POSSIBLE, IN NO EVENT WILL THE LICENSOR BE LIABLE
+     TO YOU ON ANY LEGAL THEORY (INCLUDING, WITHOUT LIMITATION,
+     NEGLIGENCE) OR OTHERWISE FOR ANY DIRECT, SPECIAL, INDIRECT,
+     INCIDENTAL, CONSEQUENTIAL, PUNITIVE, EXEMPLARY, OR OTHER LOSSES,
+     COSTS, EXPENSES, OR DAMAGES ARISING OUT OF THIS PUBLIC LICENSE OR
+     USE OF THE LICENSED MATERIAL, EVEN IF THE LICENSOR HAS BEEN
+     ADVISED OF THE POSSIBILITY OF SUCH LOSSES, COSTS, EXPENSES, OR
+     DAMAGES. WHERE A LIMITATION OF LIABILITY IS NOT ALLOWED IN FULL OR
+     IN PART, THIS LIMITATION MAY NOT APPLY TO YOU.
+
+  c. The disclaimer of warranties and limitation of liability provided
+     above shall be interpreted in a manner that, to the extent
+     possible, most closely approximates an absolute disclaimer and
+     waiver of all liability.
+
+
+Section 6 -- Term and Termination.
+
+  a. This Public License applies for the term of the Copyright and
+     Similar Rights licensed here. However, if You fail to comply with
+     this Public License, then Your rights under this Public License
+     terminate automatically.
+
+  b. Where Your right to use the Licensed Material has terminated under
+     Section 6(a), it reinstates:
+
+       1. automatically as of the date the violation is cured, provided
+          it is cured within 30 days of Your discovery of the
+          violation; or
+
+       2. upon express reinstatement by the Licensor.
+
+     For the avoidance of doubt, this Section 6(b) does not affect any
+     right the Licensor may have to seek remedies for Your violations
+     of this Public License.
+
+  c. For the avoidance of doubt, the Licensor may also offer the
+     Licensed Material under separate terms or conditions or stop
+     distributing the Licensed Material at any time; however, doing so
+     will not terminate this Public License.
+
+  d. Sections 1, 5, 6, 7, and 8 survive termination of this Public
+     License.
+
+
+Section 7 -- Other Terms and Conditions.
+
+  a. The Licensor shall not be bound by any additional or different
+     terms or conditions communicated by You unless expressly agreed.
+
+  b. Any arrangements, understandings, or agreements regarding the
+     Licensed Material not stated herein are separate from and
+     independent of the terms and conditions of this Public License.
+
+
+Section 8 -- Interpretation.
+
+  a. For the avoidance of doubt, this Public License does not, and
+     shall not be interpreted to, reduce, limit, restrict, or impose
+     conditions on any use of the Licensed Material that could lawfully
+     be made without permission under this Public License.
+
+  b. To the extent possible, if any provision of this Public License is
+     deemed unenforceable, it shall be automatically reformed to the
+     minimum extent necessary to make it enforceable. If the provision
+     cannot be reformed, it shall be severed from this Public License
+     without affecting the enforceability of the remaining terms and
+     conditions.
+
+  c. No term or condition of this Public License will be waived and no
+     failure to comply consented to unless expressly agreed to by the
+     Licensor.
+
+  d. Nothing in this Public License constitutes or may be interpreted
+     as a limitation upon, or waiver of, any privileges and immunities
+     that apply to the Licensor or You, including from the legal
+     processes of any jurisdiction or authority.
+
+
+=======================================================================
+
+Creative Commons is not a party to its public
+licenses. Notwithstanding, Creative Commons may elect to apply one of
+its public licenses to material it publishes and in those instances
+will be considered the “Licensor.” The text of the Creative Commons
+public licenses is dedicated to the public domain under the CC0 Public
+Domain Dedication. Except for the limited purpose of indicating that
+material is shared under a Creative Commons public license or as
+otherwise permitted by the Creative Commons policies published at
+creativecommons.org/policies, Creative Commons does not authorize the
+use of the trademark "Creative Commons" or any other trademark or logo
+of Creative Commons without its prior written consent including,
+without limitation, in connection with any unauthorized modifications
+to any of its public licenses or any other arrangements,
+understandings, or agreements concerning use of licensed material. For
+the avoidance of doubt, this paragraph does not form part of the
+public licenses.
+
+Creative Commons may be contacted at creativecommons.org.
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/requirements.txt`:
+
+```txt
+torch
+easyocr
+torchvision
+supervision==0.18.0
+openai==1.3.5
+transformers
+ultralytics==8.1.24
+azure-identity
+numpy
+opencv-python
+opencv-python-headless
+gradio
+dill
+accelerate
+timm
+einops==0.8.0
+paddlepaddle
+paddleocr
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/util/action_type.py`:
+
+```py
+'''
+Adapted from https://github.com/google-research/google-research/tree/master/android_in_the_wild
+'''
+
+import enum
+
+class ActionType(enum.IntEnum):
+
+  # Placeholders for unused enum values
+  UNUSED_0 = 0
+  UNUSED_1 = 1
+  UNUSED_2 = 2
+  UNUSED_8 = 8
+  UNUSED_9 = 9
+
+  ########### Agent actions ###########
+
+  # A type action that sends text to the emulator. Note that this simply sends
+  # text and does not perform any clicks for element focus or enter presses for
+  # submitting text.
+  TYPE = 3
+
+  # The dual point action used to represent all gestures.
+  DUAL_POINT = 4
+
+  # These actions differentiate pressing the home and back button from touches.
+  # They represent explicit presses of back and home performed using ADB.
+  PRESS_BACK = 5
+  PRESS_HOME = 6
+
+  # An action representing that ADB command for hitting enter was performed.
+  PRESS_ENTER = 7
+
+  ########### Episode status actions ###########
+
+  # An action used to indicate the desired task has been completed and resets
+  # the environment. This action should also be used in the case that the task
+  # has already been completed and there is nothing to do.
+  # e.g. The task is to turn on the Wi-Fi when it is already on
+  STATUS_TASK_COMPLETE = 10
+
+  # An action used to indicate that desired task is impossible to complete and
+  # resets the environment. This can be a result of many different things
+  # including UI changes, Android version differences, etc.
+  STATUS_TASK_IMPOSSIBLE = 11
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/util/box_annotator.py`:
+
+```py
+from typing import List, Optional, Union, Tuple
+
+import cv2
+import numpy as np
+
+from supervision.detection.core import Detections
+from supervision.draw.color import Color, ColorPalette
+
+
+class BoxAnnotator:
+    """
+    A class for drawing bounding boxes on an image using detections provided.
+
+    Attributes:
+        color (Union[Color, ColorPalette]): The color to draw the bounding box,
+            can be a single color or a color palette
+        thickness (int): The thickness of the bounding box lines, default is 2
+        text_color (Color): The color of the text on the bounding box, default is white
+        text_scale (float): The scale of the text on the bounding box, default is 0.5
+        text_thickness (int): The thickness of the text on the bounding box,
+            default is 1
+        text_padding (int): The padding around the text on the bounding box,
+            default is 5
+
+    """
+
+    def __init__(
+        self,
+        color: Union[Color, ColorPalette] = ColorPalette.DEFAULT,
+        thickness: int = 3, # 1 for seeclick 2 for mind2web and 3 for demo
+        text_color: Color = Color.BLACK,
+        text_scale: float = 0.5, # 0.8 for mobile/web, 0.3 for desktop # 0.4 for mind2web
+        text_thickness: int = 2, #1, # 2 for demo
+        text_padding: int = 10,
+        avoid_overlap: bool = True,
+    ):
+        self.color: Union[Color, ColorPalette] = color
+        self.thickness: int = thickness
+        self.text_color: Color = text_color
+        self.text_scale: float = text_scale
+        self.text_thickness: int = text_thickness
+        self.text_padding: int = text_padding
+        self.avoid_overlap: bool = avoid_overlap
+
+    def annotate(
+        self,
+        scene: np.ndarray,
+        detections: Detections,
+        labels: Optional[List[str]] = None,
+        skip_label: bool = False,
+        image_size: Optional[Tuple[int, int]] = None,
+    ) -> np.ndarray:
+        """
+        Draws bounding boxes on the frame using the detections provided.
+
+        Args:
+            scene (np.ndarray): The image on which the bounding boxes will be drawn
+            detections (Detections): The detections for which the
+                bounding boxes will be drawn
+            labels (Optional[List[str]]): An optional list of labels
+                corresponding to each detection. If `labels` are not provided,
+                corresponding `class_id` will be used as label.
+            skip_label (bool): Is set to `True`, skips bounding box label annotation.
+        Returns:
+            np.ndarray: The image with the bounding boxes drawn on it
+
+        Example:
+            ```python
+            import supervision as sv
+
+            classes = ['person', ...]
+            image = ...
+            detections = sv.Detections(...)
+
+            box_annotator = sv.BoxAnnotator()
+            labels = [
+                f"{classes[class_id]} {confidence:0.2f}"
+                for _, _, confidence, class_id, _ in detections
+            ]
+            annotated_frame = box_annotator.annotate(
+                scene=image.copy(),
+                detections=detections,
+                labels=labels
+            )
+            ```
+        """
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        for i in range(len(detections)):
+            x1, y1, x2, y2 = detections.xyxy[i].astype(int)
+            class_id = (
+                detections.class_id[i] if detections.class_id is not None else None
+            )
+            idx = class_id if class_id is not None else i
+            color = (
+                self.color.by_idx(idx)
+                if isinstance(self.color, ColorPalette)
+                else self.color
+            )
+            cv2.rectangle(
+                img=scene,
+                pt1=(x1, y1),
+                pt2=(x2, y2),
+                color=color.as_bgr(),
+                thickness=self.thickness,
+            )
+            if skip_label:
+                continue
+
+            text = (
+                f"{class_id}"
+                if (labels is None or len(detections) != len(labels))
+                else labels[i]
+            )
+
+            text_width, text_height = cv2.getTextSize(
+                text=text,
+                fontFace=font,
+                fontScale=self.text_scale,
+                thickness=self.text_thickness,
+            )[0]
+
+            if not self.avoid_overlap:
+                text_x = x1 + self.text_padding
+                text_y = y1 - self.text_padding
+
+                text_background_x1 = x1
+                text_background_y1 = y1 - 2 * self.text_padding - text_height
+
+                text_background_x2 = x1 + 2 * self.text_padding + text_width
+                text_background_y2 = y1
+                # text_x = x1 - self.text_padding - text_width
+                # text_y = y1 + self.text_padding + text_height
+                # text_background_x1 = x1 - 2 * self.text_padding - text_width
+                # text_background_y1 = y1
+                # text_background_x2 = x1
+                # text_background_y2 = y1 + 2 * self.text_padding + text_height
+            else:
+                text_x, text_y, text_background_x1, text_background_y1, text_background_x2, text_background_y2 = get_optimal_label_pos(self.text_padding, text_width, text_height, x1, y1, x2, y2, detections, image_size)
+
+            cv2.rectangle(
+                img=scene,
+                pt1=(text_background_x1, text_background_y1),
+                pt2=(text_background_x2, text_background_y2),
+                color=color.as_bgr(),
+                thickness=cv2.FILLED,
+            )
+            # import pdb; pdb.set_trace()
+            box_color = color.as_rgb()
+            luminance = 0.299 * box_color[0] + 0.587 * box_color[1] + 0.114 * box_color[2]
+            text_color = (0,0,0) if luminance > 160 else (255,255,255)
+            cv2.putText(
+                img=scene,
+                text=text,
+                org=(text_x, text_y),
+                fontFace=font,
+                fontScale=self.text_scale,
+                # color=self.text_color.as_rgb(),
+                color=text_color,
+                thickness=self.text_thickness,
+                lineType=cv2.LINE_AA,
+            )
+        return scene
+    
+
+def box_area(box):
+        return (box[2] - box[0]) * (box[3] - box[1])
+
+def intersection_area(box1, box2):
+    x1 = max(box1[0], box2[0])
+    y1 = max(box1[1], box2[1])
+    x2 = min(box1[2], box2[2])
+    y2 = min(box1[3], box2[3])
+    return max(0, x2 - x1) * max(0, y2 - y1)
+
+def IoU(box1, box2, return_max=True):
+    intersection = intersection_area(box1, box2)
+    union = box_area(box1) + box_area(box2) - intersection
+    if box_area(box1) > 0 and box_area(box2) > 0:
+        ratio1 = intersection / box_area(box1)
+        ratio2 = intersection / box_area(box2)
+    else:
+        ratio1, ratio2 = 0, 0
+    if return_max:
+        return max(intersection / union, ratio1, ratio2)
+    else:
+        return intersection / union
+
+
+def get_optimal_label_pos(text_padding, text_width, text_height, x1, y1, x2, y2, detections, image_size):
+    """ check overlap of text and background detection box, and get_optimal_label_pos, 
+        pos: str, position of the text, must be one of 'top left', 'top right', 'outer left', 'outer right' TODO: if all are overlapping, return the last one, i.e. outer right
+        Threshold: default to 0.3
+    """
+
+    def get_is_overlap(detections, text_background_x1, text_background_y1, text_background_x2, text_background_y2, image_size):
+        is_overlap = False
+        for i in range(len(detections)):
+            detection = detections.xyxy[i].astype(int)
+            if IoU([text_background_x1, text_background_y1, text_background_x2, text_background_y2], detection) > 0.3:
+                is_overlap = True
+                break
+        # check if the text is out of the image
+        if text_background_x1 < 0 or text_background_x2 > image_size[0] or text_background_y1 < 0 or text_background_y2 > image_size[1]:
+            is_overlap = True
+        return is_overlap
+    
+    # if pos == 'top left':
+    text_x = x1 + text_padding
+    text_y = y1 - text_padding
+
+    text_background_x1 = x1
+    text_background_y1 = y1 - 2 * text_padding - text_height
+
+    text_background_x2 = x1 + 2 * text_padding + text_width
+    text_background_y2 = y1
+    is_overlap = get_is_overlap(detections, text_background_x1, text_background_y1, text_background_x2, text_background_y2, image_size)
+    if not is_overlap:
+        return text_x, text_y, text_background_x1, text_background_y1, text_background_x2, text_background_y2
+    
+    # elif pos == 'outer left':
+    text_x = x1 - text_padding - text_width
+    text_y = y1 + text_padding + text_height
+
+    text_background_x1 = x1 - 2 * text_padding - text_width
+    text_background_y1 = y1
+
+    text_background_x2 = x1
+    text_background_y2 = y1 + 2 * text_padding + text_height
+    is_overlap = get_is_overlap(detections, text_background_x1, text_background_y1, text_background_x2, text_background_y2, image_size)
+    if not is_overlap:
+        return text_x, text_y, text_background_x1, text_background_y1, text_background_x2, text_background_y2
+    
+
+    # elif pos == 'outer right':
+    text_x = x2 + text_padding
+    text_y = y1 + text_padding + text_height
+
+    text_background_x1 = x2
+    text_background_y1 = y1
+
+    text_background_x2 = x2 + 2 * text_padding + text_width
+    text_background_y2 = y1 + 2 * text_padding + text_height
+
+    is_overlap = get_is_overlap(detections, text_background_x1, text_background_y1, text_background_x2, text_background_y2, image_size)
+    if not is_overlap:
+        return text_x, text_y, text_background_x1, text_background_y1, text_background_x2, text_background_y2
+
+    # elif pos == 'top right':
+    text_x = x2 - text_padding - text_width
+    text_y = y1 - text_padding
+
+    text_background_x1 = x2 - 2 * text_padding - text_width
+    text_background_y1 = y1 - 2 * text_padding - text_height
+
+    text_background_x2 = x2
+    text_background_y2 = y1
+
+    is_overlap = get_is_overlap(detections, text_background_x1, text_background_y1, text_background_x2, text_background_y2, image_size)
+    if not is_overlap:
+        return text_x, text_y, text_background_x1, text_background_y1, text_background_x2, text_background_y2
+
+    return text_x, text_y, text_background_x1, text_background_y1, text_background_x2, text_background_y2
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/util/action_matching.py`:
+
+```py
+'''
+Adapted from https://github.com/google-research/google-research/tree/master/android_in_the_wild
+'''
+
+import jax
+import jax.numpy as jnp
+import numpy as np
+
+# import action_type as action_type_lib
+import enum
+
+class ActionType(enum.IntEnum):
+    # Placeholders for unused enum values
+    UNUSED_0 = 0
+    UNUSED_1 = 1
+    UNUSED_2 = 2
+    UNUSED_8 = 8
+    UNUSED_9 = 9
+
+    ########### Agent actions ###########
+
+    # A type action that sends text to the emulator. Note that this simply sends
+    # text and does not perform any clicks for element focus or enter presses for
+    # submitting text.
+    TYPE = 3
+
+    # The dual point action used to represent all gestures.
+    DUAL_POINT = 4
+
+    # These actions differentiate pressing the home and back button from touches.
+    # They represent explicit presses of back and home performed using ADB.
+    PRESS_BACK = 5
+    PRESS_HOME = 6
+
+    # An action representing that ADB command for hitting enter was performed.
+    PRESS_ENTER = 7
+
+    ########### Episode status actions ###########
+
+    # An action used to indicate the desired task has been completed and resets
+    # the environment. This action should also be used in the case that the task
+    # has already been completed and there is nothing to do.
+    # e.g. The task is to turn on the Wi-Fi when it is already on
+    STATUS_TASK_COMPLETE = 10
+
+    # An action used to indicate that desired task is impossible to complete and
+    # resets the environment. This can be a result of many different things
+    # including UI changes, Android version differences, etc.
+    STATUS_TASK_IMPOSSIBLE = 11
+
+
+_TAP_DISTANCE_THRESHOLD = 0.14  # Fraction of the screen
+ANNOTATION_WIDTH_AUGMENT_FRACTION = 1.4
+ANNOTATION_HEIGHT_AUGMENT_FRACTION = 1.4
+
+# Interval determining if an action is a tap or a swipe.
+_SWIPE_DISTANCE_THRESHOLD = 0.04
+
+
+def _yx_in_bounding_boxes(
+    yx, bounding_boxes
+):
+  """Check if the (y,x) point is contained in each bounding box.
+
+  Args:
+    yx: The (y, x) coordinate in pixels of the point.
+    bounding_boxes: A 2D int array of shape (num_bboxes, 4), where each row
+      represents a bounding box: (y_top_left, x_top_left, box_height,
+      box_width). Note: containment is inclusive of the bounding box edges.
+
+  Returns:
+    is_inside: A 1D bool array where each element specifies if the point is
+      contained within the respective box.
+  """
+  y, x = yx
+
+  # `bounding_boxes` has shape (n_elements, 4); we extract each array along the
+  # last axis into shape (n_elements, 1), then squeeze unneeded dimension.
+  top, left, height, width = [
+      jnp.squeeze(v, axis=-1) for v in jnp.split(bounding_boxes, 4, axis=-1)
+  ]
+
+  # The y-axis is inverted for AndroidEnv, so bottom = top + height.
+  bottom, right = top + height, left + width
+
+  return jnp.logical_and(y >= top, y <= bottom) & jnp.logical_and(
+      x >= left, x <= right)
+
+
+def _resize_annotation_bounding_boxes(
+    annotation_positions, annotation_width_augment_fraction,
+    annotation_height_augment_fraction):
+  """Resize the bounding boxes by the given fractions.
+
+  Args:
+    annotation_positions: Array of shape (N, 4), where each row represents the
+      (y, x, height, width) of the bounding boxes.
+    annotation_width_augment_fraction: The fraction to augment the box widths,
+      E.g., 1.4 == 240% total increase.
+    annotation_height_augment_fraction: Same as described for width, but for box
+      height.
+
+  Returns:
+    Resized bounding box.
+
+  """
+  height_change = (
+      annotation_height_augment_fraction * annotation_positions[:, 2])
+  width_change = (
+      annotation_width_augment_fraction * annotation_positions[:, 3])
+
+  # Limit bounding box positions to the screen.
+  resized_annotations = jnp.stack([
+      jnp.maximum(0, annotation_positions[:, 0] - (height_change / 2)),
+      jnp.maximum(0, annotation_positions[:, 1] - (width_change / 2)),
+      jnp.minimum(1, annotation_positions[:, 2] + height_change),
+      jnp.minimum(1, annotation_positions[:, 3] + width_change),
+  ],
+                                  axis=1)
+  return resized_annotations
+
+
+def is_tap_action(normalized_start_yx,
+                  normalized_end_yx):
+  distance = jnp.linalg.norm(
+      jnp.array(normalized_start_yx) - jnp.array(normalized_end_yx))
+  return distance <= _SWIPE_DISTANCE_THRESHOLD
+
+
+def _is_non_dual_point_action(action_type):
+  return jnp.not_equal(action_type, ActionType.DUAL_POINT)
+
+
+def _check_tap_actions_match(
+    tap_1_yx,
+    tap_2_yx,
+    annotation_positions,
+    matching_tap_distance_threshold_screen_percentage,
+    annotation_width_augment_fraction,
+    annotation_height_augment_fraction,
+):
+  """Determines if two tap actions are the same."""
+  resized_annotation_positions = _resize_annotation_bounding_boxes(
+      annotation_positions,
+      annotation_width_augment_fraction,
+      annotation_height_augment_fraction,
+  )
+
+  # Check if the ground truth tap action falls in an annotation's bounding box.
+  tap1_in_box = _yx_in_bounding_boxes(tap_1_yx, resized_annotation_positions)
+  tap2_in_box = _yx_in_bounding_boxes(tap_2_yx, resized_annotation_positions)
+  both_in_box = jnp.max(tap1_in_box & tap2_in_box)
+
+  # If the ground-truth tap action falls outside any of the annotation
+  # bounding boxes or one of the actions is inside a bounding box and the other
+  # is outside bounding box or vice versa, compare the points using Euclidean
+  # distance.
+  within_threshold = (
+      jnp.linalg.norm(jnp.array(tap_1_yx) - jnp.array(tap_2_yx))
+      <= matching_tap_distance_threshold_screen_percentage
+  )
+  return jnp.logical_or(both_in_box, within_threshold)
+
+
+def _check_drag_actions_match(
+    drag_1_touch_yx,
+    drag_1_lift_yx,
+    drag_2_touch_yx,
+    drag_2_lift_yx,
+):
+  """Determines if two drag actions are the same."""
+  # Store drag deltas (the change in the y and x coordinates from touch to
+  # lift), magnitudes, and the index of the main axis, which is the axis with
+  # the greatest change in coordinate value (e.g. a drag starting at (0, 0) and
+  # ending at (0.3, 0.5) has a main axis index of 1).
+  drag_1_deltas = drag_1_lift_yx - drag_1_touch_yx
+  drag_1_magnitudes = jnp.abs(drag_1_deltas)
+  drag_1_main_axis = np.argmax(drag_1_magnitudes)
+  drag_2_deltas = drag_2_lift_yx - drag_2_touch_yx
+  drag_2_magnitudes = jnp.abs(drag_2_deltas)
+  drag_2_main_axis = np.argmax(drag_2_magnitudes)
+
+  return jnp.equal(drag_1_main_axis, drag_2_main_axis)
+
+
+def check_actions_match(
+    action_1_touch_yx,
+    action_1_lift_yx,
+    action_1_action_type,
+    action_2_touch_yx,
+    action_2_lift_yx,
+    action_2_action_type,
+    annotation_positions,
+    tap_distance_threshold = _TAP_DISTANCE_THRESHOLD,
+    annotation_width_augment_fraction = ANNOTATION_WIDTH_AUGMENT_FRACTION,
+    annotation_height_augment_fraction = ANNOTATION_HEIGHT_AUGMENT_FRACTION,
+):
+  """Determines if two actions are considered to be the same.
+
+  Two actions being "the same" is defined here as two actions that would result
+  in a similar screen state.
+
+  Args:
+    action_1_touch_yx: The (y, x) coordinates of the first action's touch.
+    action_1_lift_yx: The (y, x) coordinates of the first action's lift.
+    action_1_action_type: The action type of the first action.
+    action_2_touch_yx: The (y, x) coordinates of the second action's touch.
+    action_2_lift_yx: The (y, x) coordinates of the second action's lift.
+    action_2_action_type: The action type of the second action.
+    annotation_positions: The positions of the UI annotations for the screen. It
+      is A 2D int array of shape (num_bboxes, 4), where each row represents a
+      bounding box: (y_top_left, x_top_left, box_height, box_width). Note that
+      containment is inclusive of the bounding box edges.
+    tap_distance_threshold: The threshold that determines if two taps result in
+      a matching screen state if they don't fall the same bounding boxes.
+    annotation_width_augment_fraction: The fraction to increase the width of the
+      bounding box by.
+    annotation_height_augment_fraction: The fraction to increase the height of
+      of the bounding box by.
+
+  Returns:
+    A boolean representing whether the two given actions are the same or not.
+  """
+  action_1_touch_yx = jnp.asarray(action_1_touch_yx)
+  action_1_lift_yx = jnp.asarray(action_1_lift_yx)
+  action_2_touch_yx = jnp.asarray(action_2_touch_yx)
+  action_2_lift_yx = jnp.asarray(action_2_lift_yx)
+
+  # Checks if at least one of the actions is global (i.e. not DUAL_POINT),
+  # because if that is the case, only the actions' types need to be compared.
+  has_non_dual_point_action = jnp.logical_or(
+      _is_non_dual_point_action(action_1_action_type),
+      _is_non_dual_point_action(action_2_action_type),
+  )
+  #print("non dual point: "+str(has_non_dual_point_action))
+
+  different_dual_point_types = jnp.logical_xor(
+      is_tap_action(action_1_touch_yx, action_1_lift_yx),
+      is_tap_action(action_2_touch_yx, action_2_lift_yx),
+  )
+  #print("different dual type: "+str(different_dual_point_types))
+
+  is_tap = jnp.logical_and(
+      is_tap_action(action_1_touch_yx, action_1_lift_yx),
+      is_tap_action(action_2_touch_yx, action_2_lift_yx),
+  )
+  #print("is tap: "+str(is_tap))
+
+  taps_match = _check_tap_actions_match(
+      action_1_touch_yx,
+      action_2_touch_yx,
+      annotation_positions,
+      tap_distance_threshold,
+      annotation_width_augment_fraction,
+      annotation_height_augment_fraction,
+  )
+  #print("tap match: "+str(taps_match))
+
+  taps_match = jnp.logical_and(is_tap, taps_match)
+  #print("tap match: "+str(taps_match))
+
+  drags_match = _check_drag_actions_match(
+      action_1_touch_yx, action_1_lift_yx, action_2_touch_yx, action_2_lift_yx
+  )
+  drags_match = jnp.where(is_tap, False, drags_match)
+  #print("drag match: "+str(drags_match))
+
+  return jnp.where(
+      has_non_dual_point_action,
+      jnp.equal(action_1_action_type, action_2_action_type),
+      jnp.where(
+          different_dual_point_types,
+          False,
+          jnp.logical_or(taps_match, drags_match),
+      ),
+  )
+
+
+def action_2_format(step_data):
+    # 把test数据集中的动作格式转换为计算matching score的格式
+    action_type = step_data["action_type_id"]
+
+    if action_type == 4:
+        if step_data["action_type_text"] == 'click':  # 点击
+            touch_point = step_data["touch"]
+            lift_point = step_data["lift"]
+        else:  # 上下左右滑动
+            if step_data["action_type_text"] == 'scroll down':
+                touch_point = [0.5, 0.8]
+                lift_point = [0.5, 0.2]
+            elif step_data["action_type_text"] == 'scroll up':
+                touch_point = [0.5, 0.2]
+                lift_point = [0.5, 0.8]
+            elif step_data["action_type_text"] == 'scroll left':
+                touch_point = [0.2, 0.5]
+                lift_point = [0.8, 0.5]
+            elif step_data["action_type_text"] == 'scroll right':
+                touch_point = [0.8, 0.5]
+                lift_point = [0.2, 0.5]
+    else:
+        touch_point = [-1.0, -1.0]
+        lift_point = [-1.0, -1.0]
+
+    if action_type == 3:
+        typed_text = step_data["type_text"]
+    else:
+        typed_text = ""
+
+    action = {"action_type": action_type, "touch_point": touch_point, "lift_point": lift_point,
+              "typed_text": typed_text}
+
+    action["touch_point"] = [action["touch_point"][1], action["touch_point"][0]]
+    action["lift_point"] = [action["lift_point"][1], action["lift_point"][0]]
+    action["typed_text"] = action["typed_text"].lower()
+
+    return action
+
+
+def pred_2_format(step_data):
+    # 把模型输出的内容转换为计算action_matching的格式
+    action_type = step_data["action_type"]
+
+    if action_type == 4:  # 点击
+        action_type_new = 4
+        touch_point = step_data["click_point"]
+        lift_point = step_data["click_point"]
+        typed_text = ""
+    elif action_type == 0:
+        action_type_new = 4
+        touch_point = [0.5, 0.8]
+        lift_point = [0.5, 0.2]
+        typed_text = ""
+    elif action_type == 1:
+        action_type_new = 4
+        touch_point = [0.5, 0.2]
+        lift_point = [0.5, 0.8]
+        typed_text = ""
+    elif action_type == 8:
+        action_type_new = 4
+        touch_point = [0.2, 0.5]
+        lift_point = [0.8, 0.5]
+        typed_text = ""
+    elif action_type == 9:
+        action_type_new = 4
+        touch_point = [0.8, 0.5]
+        lift_point = [0.2, 0.5]
+        typed_text = ""
+    else:
+        action_type_new = action_type
+        touch_point = [-1.0, -1.0]
+        lift_point = [-1.0, -1.0]
+        typed_text = ""
+        if action_type_new == 3:
+            typed_text = step_data["typed_text"]
+
+    action = {"action_type": action_type_new, "touch_point": touch_point, "lift_point": lift_point,
+              "typed_text": typed_text}
+
+    action["touch_point"] = [action["touch_point"][1], action["touch_point"][0]]
+    action["lift_point"] = [action["lift_point"][1], action["lift_point"][0]]
+    action["typed_text"] = action["typed_text"].lower()
+
+    return action
+
+
+def pred_2_format_simplified(step_data):
+    # 把模型输出的内容转换为计算action_matching的格式
+    action_type = step_data["action_type"]
+
+    if action_type == 'click' :  # 点击
+        action_type_new = 4
+        touch_point = step_data["click_point"]
+        lift_point = step_data["click_point"]
+        typed_text = ""
+    elif action_type == 'scroll' and step_data["direction"] == 'down':
+        action_type_new = 4
+        touch_point = [0.5, 0.8]
+        lift_point = [0.5, 0.2]
+        typed_text = ""
+    elif action_type == 'scroll' and step_data["direction"] == 'up':
+        action_type_new = 4
+        touch_point = [0.5, 0.2]
+        lift_point = [0.5, 0.8]
+        typed_text = ""
+    elif action_type == 'scroll' and step_data["direction"] == 'left':
+        action_type_new = 4
+        touch_point = [0.2, 0.5]
+        lift_point = [0.8, 0.5]
+        typed_text = ""
+    elif action_type == 'scroll' and step_data["direction"] == 'right':
+        action_type_new = 4
+        touch_point = [0.8, 0.5]
+        lift_point = [0.2, 0.5]
+        typed_text = ""
+    elif action_type == 'type':
+        action_type_new = 3
+        touch_point = [-1.0, -1.0]
+        lift_point = [-1.0, -1.0]
+        typed_text = step_data["text"]
+    elif action_type == 'navigate_back':
+        action_type_new = 5
+        touch_point = [-1.0, -1.0]
+        lift_point = [-1.0, -1.0]
+        typed_text = ""
+    elif action_type == 'navigate_home':
+        action_type_new = 6
+        touch_point = [-1.0, -1.0]
+        lift_point = [-1.0, -1.0]
+        typed_text = ""
+    else:
+        action_type_new = action_type
+        touch_point = [-1.0, -1.0]
+        lift_point = [-1.0, -1.0]
+        typed_text = ""
+        # if action_type_new == 'type':
+        #     typed_text = step_data["text"]
+
+    action = {"action_type": action_type_new, "touch_point": touch_point, "lift_point": lift_point,
+              "typed_text": typed_text}
+
+    action["touch_point"] = [action["touch_point"][1], action["touch_point"][0]]
+    action["lift_point"] = [action["lift_point"][1], action["lift_point"][0]]
+    action["typed_text"] = action["typed_text"].lower()
+
+    return action
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/weights/convert_safetensor_to_pt.py`:
+
+```py
+import torch
+from ultralytics.nn.tasks import DetectionModel
+from safetensors.torch import load_file
+import argparse
+import yaml
+import os
+
+# accept args to specify v1
+parser = argparse.ArgumentParser(description='add weight directory')
+parser.add_argument('--weights_dir', type=str, required=True, help='Specify the path to the safetensor file', default='weights/icon_detect')
+args = parser.parse_args()
+
+tensor_dict = load_file(os.path.join(args.weights_dir, "model.safetensors"))
+model = DetectionModel(os.path.join(args.weights_dir, "model.yaml"))
+
+model.load_state_dict(tensor_dict)
+save_dict = {'model':model}
+
+with open(os.path.join(args.weights_dir, "train_args.yaml"), 'r') as file:
+    train_args = yaml.safe_load(file)
+save_dict.update(train_args)
+torch.save(save_dict, os.path.join(args.weights_dir, "best.pt"))
+
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/weights/config.json`:
+
+```json
+{
+  "_name_or_path": "Salesforce/blip2-opt-2.7b",
+  "architectures": [
+    "Blip2ForConditionalGeneration"
+  ],
+  "initializer_factor": 1.0,
+  "initializer_range": 0.02,
+  "model_type": "blip-2",
+  "num_query_tokens": 32,
+  "qformer_config": {
+    "classifier_dropout": null,
+    "model_type": "blip_2_qformer"
+  },
+  "text_config": {
+    "_name_or_path": "facebook/opt-2.7b",
+    "activation_dropout": 0.0,
+    "architectures": [
+      "OPTForCausalLM"
+    ],
+    "eos_token_id": 50118,
+    "ffn_dim": 10240,
+    "hidden_size": 2560,
+    "model_type": "opt",
+    "num_attention_heads": 32,
+    "num_hidden_layers": 32,
+    "prefix": "</s>",
+    "torch_dtype": "float16",
+    "word_embed_proj_dim": 2560
+  },
+  "torch_dtype": "bfloat16",
+  "transformers_version": "4.40.2",
+  "use_decoder_only_language_model": true,
+  "vision_config": {
+    "dropout": 0.0,
+    "initializer_factor": 1.0,
+    "model_type": "blip_2_vision_model",
+    "num_channels": 3,
+    "projection_dim": 512
+  }
+}
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/weights/README.md`:
+
+```md
+---
+library_name: transformers
+license: mit
+pipeline_tag: image-text-to-text
+---
+📢 [[Project Page](https://microsoft.github.io/OmniParser/)] [[Blog Post](https://www.microsoft.com/en-us/research/articles/omniparser-for-pure-vision-based-gui-agent/)] [[Demo](https://huggingface.co/spaces/microsoft/OmniParser/)] 
+
+# Model Summary
+OmniParser is a general screen parsing tool, which interprets/converts UI screenshot to structured format, to improve existing LLM based UI agent. 
+Training Datasets include: 1) an interactable icon detection dataset, which was curated from popular web pages and automatically annotated to highlight clickable and actionable regions, and 2) an icon description dataset, designed to associate each UI element with its corresponding function. 
+
+This model hub includes a finetuned version of YOLOv8 and a finetuned BLIP-2 model on the above dataset respectively. For more details of the models used and finetuning, please refer to the [paper](https://arxiv.org/abs/2408.00203).
+
+# Responsible AI Considerations
+## Intended Use
+- OmniParser is designed to be able to convert unstructured screenshot image into structured list of elements including interactable regions location and captions of icons on its potential functionality. 
+- OmniParser is intended to be used in settings where users are already trained on responsible analytic approaches and critical reasoning is expected. OmniParser is capable of providing extracted information from the screenshot, however human judgement is needed for the output of OmniParser. 
+- OmniParser is intended to be used on various screenshots, which includes both PC and Phone, and also on various applications.  
+## limitations
+- OmniParser is designed to faithfully convert screenshot image into structured elements of interactable regions and semantics of the screen, while it does not detect harmful content in its input (like users have freedom to decide the input of any LLMs), users are expected to provide input to the OmniParser that is not harmful. 
+- While OmniParser only converts screenshot image into texts, it can be used to construct an GUI agent based on LLMs that is actionable. When developing and operating the agent using OmniParser, the developers need to be responsible and follow common safety standard. 
+- For OmniPaser-BLIP2, it may incorrectly infer the gender or other sensitive attribute (e.g., race, religion etc.) of individuals in icon images. Inference of sensitive attributes may rely upon stereotypes and generalizations rather than information about specific individuals and are more likely to be incorrect for marginalized people. Incorrect inferences may result in significant physical or psychological injury or restrict, infringe upon or undermine the ability to realize an individual’s human rights. We do not recommend use of OmniParser in any workplace-like use case scenario.
+
+# License
+Please note that icon_detect model is under AGPL license, and icon_caption_blip2 & icon_caption_florence is under MIT license. Please refer to the LICENSE file in the folder of each model. 
+
+
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/demo.ipynb`:
+
+```ipynb
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from utils import get_som_labeled_img, check_ocr_box, get_caption_model_processor, get_yolo_model\n",
+    "import torch\n",
+    "from ultralytics import YOLO\n",
+    "from PIL import Image\n",
+    "device = \"cuda\" if torch.cuda.is_available() else \"cpu\"\n",
+    "model_path='weights/icon_detect_v1_5/model_v1_5.pt'\n",
+    "\n",
+    "som_model = get_yolo_model(model_path)\n",
+    "\n",
+    "som_model.to(device)\n",
+    "print('model to {}'.format(device))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# two choices for caption model: fine-tuned blip2 or florence2\n",
+    "import importlib\n",
+    "import utils\n",
+    "importlib.reload(utils)\n",
+    "from utils import get_som_labeled_img, check_ocr_box, get_caption_model_processor, get_yolo_model\n",
+    "# caption_model_processor = get_caption_model_processor(model_name=\"blip2\", model_name_or_path=\"weights/icon_caption_blip2\", device=device)\n",
+    "caption_model_processor = get_caption_model_processor(model_name=\"florence2\", model_name_or_path=\"weights/icon_caption_florence\", device=device)\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "som_model.device, type(som_model) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# reload utils\n",
+    "import importlib\n",
+    "import utils\n",
+    "importlib.reload(utils)\n",
+    "from utils import get_som_labeled_img, check_ocr_box, get_caption_model_processor, get_yolo_model\n",
+    "\n",
+    "image_path = 'imgs/google_page.png'\n",
+    "image_path = 'imgs/windows_home.png'\n",
+    "# image_path = 'imgs/windows_multitab.png'\n",
+    "# image_path = 'imgs/omni3.jpg'\n",
+    "# image_path = 'imgs/ios.png'\n",
+    "image_path = 'imgs/word.png'\n",
+    "# image_path = 'imgs/excel2.png'\n",
+    "\n",
+    "image = Image.open(image_path)\n",
+    "image_rgb = image.convert('RGB')\n",
+    "print('image size:', image.size)\n",
+    "\n",
+    "box_overlay_ratio = max(image.size) / 3200\n",
+    "draw_bbox_config = {\n",
+    "    'text_scale': 0.8 * box_overlay_ratio,\n",
+    "    'text_thickness': max(int(2 * box_overlay_ratio), 1),\n",
+    "    'text_padding': max(int(3 * box_overlay_ratio), 1),\n",
+    "    'thickness': max(int(3 * box_overlay_ratio), 1),\n",
+    "}\n",
+    "BOX_TRESHOLD = 0.05\n",
+    "\n",
+    "import time\n",
+    "print(\"Starting ocr pipeline\")\n",
+    "start = time.time()\n",
+    "ocr_bbox_rslt, is_goal_filtered = check_ocr_box(image_path, display_img = False, output_bb_format='xyxy', goal_filtering=None, easyocr_args={'paragraph': False, 'text_threshold':0.8}, use_paddleocr=True)\n",
+    "text, ocr_bbox = ocr_bbox_rslt\n",
+    "cur_time_ocr = time.time()\n",
+    "print(f\"ocr time: {cur_time_ocr - start}\")\n",
+    "\n",
+    "print(\"Starting labeling pipeline\")\n",
+    "cur_time_caption = time.time() \n",
+    "dino_labled_img, label_coordinates, parsed_content_list = get_som_labeled_img(image_path, som_model, BOX_TRESHOLD = BOX_TRESHOLD, output_coord_in_ratio=True, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=caption_model_processor, ocr_text=text,use_local_semantics=True, iou_threshold=0.7, scale_img=False, batch_size=128)\n",
+    "print(f\"labelling time: {cur_time_caption - cur_time_ocr}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# plot dino_labled_img it is in base64\n",
+    "import base64\n",
+    "import matplotlib.pyplot as plt\n",
+    "import io\n",
+    "plt.figure(figsize=(15,15))\n",
+    "\n",
+    "image = Image.open(io.BytesIO(base64.b64decode(dino_labled_img)))\n",
+    "plt.axis('off')\n",
+    "\n",
+    "plt.imshow(image)\n",
+    "# print(len(parsed_content_list))\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "df = pd.DataFrame(parsed_content_list)\n",
+    "df['ID'] = range(len(df))\n",
+    "\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "parsed_content_list"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "pilot",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/README.md`:
+
+```md
+# OmniParser: Screen Parsing tool for Pure Vision Based GUI Agent
+
+<p align="center">
+  <img src="imgs/logo.png" alt="Logo">
+</p>
+
+[![arXiv](https://img.shields.io/badge/Paper-green)](https://arxiv.org/abs/2408.00203)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+📢 [[Project Page](https://microsoft.github.io/OmniParser/)] [[Blog Post](https://www.microsoft.com/en-us/research/articles/omniparser-for-pure-vision-based-gui-agent/)] [[Models](https://huggingface.co/microsoft/OmniParser)] [huggingface space](https://huggingface.co/spaces/microsoft/OmniParser)
+
+**OmniParser** is a comprehensive method for parsing user interface screenshots into structured and easy-to-understand elements, which significantly enhances the ability of GPT-4V to generate actions that can be accurately grounded in the corresponding regions of the interface. 
+
+## News
+- [2024/11/26] We release an updated version, OmniParser V1.5 which features 1) more fine grained/small icon detection, 2) prediction of whether each screen element is interactable or not. Examples in the demo.ipynb. 
+- [2024/10] OmniParser was the #1 trending model on huggingface model hub (starting 10/29/2024). 
+- [2024/10] Feel free to checkout our demo on [huggingface space](https://huggingface.co/spaces/microsoft/OmniParser)! (stay tuned for OmniParser + Claude Computer Use)
+- [2024/10] Both Interactive Region Detection Model and Icon functional description model are released! [Hugginface models](https://huggingface.co/microsoft/OmniParser)
+- [2024/09] OmniParser achieves the best performance on [Windows Agent Arena](https://microsoft.github.io/WindowsAgentArena/)! 
+
+## Install 
+Install environment:
+```python
+conda create -n "omni" python==3.12
+conda activate omni
+pip install -r requirements.txt
+```
+
+Then download the model ckpts files in: https://huggingface.co/microsoft/OmniParser, and put them under weights/, default folder structure is: weights/icon_detect, weights/icon_caption_florence, weights/icon_caption_blip2. 
+
+For v1: 
+convert the safetensor to .pt file. 
+```python
+python weights/convert_safetensor_to_pt.py
+
+For v1.5: 
+download 'model_v1_5.pt' from https://huggingface.co/microsoft/OmniParser/tree/main/icon_detect_v1_5, make a new dir: weights/icon_detect_v1_5, and put it inside the folder. No weight conversion is needed. 
+```
+
+## Examples:
+We put together a few simple examples in the demo.ipynb. 
+
+## Gradio Demo
+To run gradio demo, simply run:
+```python
+# For v1
+python gradio_demo.py --icon_detect_model weights/icon_detect/best.pt --icon_caption_model florence2
+# For v1.5
+python gradio_demo.py --icon_detect_model weights/icon_detect_v1_5/model_v1_5.pt --icon_caption_model florence2
+```
+
+## Model Weights License
+For the model checkpoints on huggingface model hub, please note that icon_detect model is under AGPL license since it is a license inherited from the original yolo model. And icon_caption_blip2 & icon_caption_florence is under MIT license. Please refer to the LICENSE file in the folder of each model: https://huggingface.co/microsoft/OmniParser.
+
+## 📚 Citation
+Our technical report can be found [here](https://arxiv.org/abs/2408.00203).
+If you find our work useful, please consider citing our work:
+```
+@misc{lu2024omniparserpurevisionbased,
+      title={OmniParser for Pure Vision Based GUI Agent}, 
+      author={Yadong Lu and Jianwei Yang and Yelong Shen and Ahmed Awadallah},
+      year={2024},
+      eprint={2408.00203},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2408.00203}, 
+}
+```
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/utils.py`:
+
+```py
+# from ultralytics import YOLO
+import os
+import io
+import base64
+import time
+from PIL import Image, ImageDraw, ImageFont
+import json
+import requests
+# utility function
+import os
+from openai import AzureOpenAI
+
+import json
+import sys
+import os
+import cv2
+import numpy as np
+# %matplotlib inline
+from matplotlib import pyplot as plt
+import easyocr
+from paddleocr import PaddleOCR
+reader = easyocr.Reader(['en'])
+paddle_ocr = PaddleOCR(
+    lang='en',  # other lang also available
+    use_angle_cls=False,
+    use_gpu=False,  # using cuda will conflict with pytorch in the same process
+    show_log=False,
+    max_batch_size=1024,
+    use_dilation=True,  # improves accuracy
+    det_db_score_mode='slow',  # improves accuracy
+    rec_batch_num=1024)
+import time
+import base64
+
+import os
+import ast
+import torch
+from typing import Tuple, List
+from torchvision.ops import box_convert
+import re
+from torchvision.transforms import ToPILImage
+import supervision as sv
+import torchvision.transforms as T
+
+
+def get_caption_model_processor(model_name, model_name_or_path="Salesforce/blip2-opt-2.7b", device=None):
+    if not device:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    if model_name == "blip2":
+        from transformers import Blip2Processor, Blip2ForConditionalGeneration
+        processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
+        if device == 'cpu':
+            model = Blip2ForConditionalGeneration.from_pretrained(
+            model_name_or_path, device_map=None, torch_dtype=torch.float32
+        ) 
+        else:
+            model = Blip2ForConditionalGeneration.from_pretrained(
+            model_name_or_path, device_map=None, torch_dtype=torch.float16
+        ).to(device)
+    elif model_name == "florence2":
+        from transformers import AutoProcessor, AutoModelForCausalLM 
+        processor = AutoProcessor.from_pretrained("microsoft/Florence-2-base", trust_remote_code=True)
+        if device == 'cpu':
+            model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=torch.float32, trust_remote_code=True)
+        else:
+            model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=torch.float16, trust_remote_code=True).to(device)
+    return {'model': model.to(device), 'processor': processor}
+
+
+def get_yolo_model(model_path):
+    from ultralytics import YOLO
+    # Load the model.
+    model = YOLO(model_path)
+    return model
+
+
+@torch.inference_mode()
+def get_parsed_content_icon(filtered_boxes, starting_idx, image_source, caption_model_processor, prompt=None, batch_size=32):
+    # Number of samples per batch, --> 256 roughly takes 23 GB of GPU memory for florence model
+
+    to_pil = ToPILImage()
+    if starting_idx:
+        non_ocr_boxes = filtered_boxes[starting_idx:]
+    else:
+        non_ocr_boxes = filtered_boxes
+    croped_pil_image = []
+    for i, coord in enumerate(non_ocr_boxes):
+        xmin, xmax = int(coord[0]*image_source.shape[1]), int(coord[2]*image_source.shape[1])
+        ymin, ymax = int(coord[1]*image_source.shape[0]), int(coord[3]*image_source.shape[0])
+        cropped_image = image_source[ymin:ymax, xmin:xmax, :]
+        croped_pil_image.append(to_pil(cropped_image))
+
+    model, processor = caption_model_processor['model'], caption_model_processor['processor']
+    if not prompt:
+        if 'florence' in model.config.name_or_path:
+            prompt = "<CAPTION>"
+        else:
+            prompt = "The image shows"
+    
+    generated_texts = []
+    device = model.device
+    for i in range(0, len(croped_pil_image), batch_size):
+        start = time.time()
+        batch = croped_pil_image[i:i+batch_size]
+        if model.device.type == 'cuda':
+            inputs = processor(images=batch, text=[prompt]*len(batch), return_tensors="pt").to(device=device, dtype=torch.float16)
+        else:
+            inputs = processor(images=batch, text=[prompt]*len(batch), return_tensors="pt").to(device=device)
+        if 'florence' in model.config.name_or_path:
+            generated_ids = model.generate(input_ids=inputs["input_ids"],pixel_values=inputs["pixel_values"],max_new_tokens=100,num_beams=3, do_sample=False)
+        else:
+            generated_ids = model.generate(**inputs, max_length=100, num_beams=5, no_repeat_ngram_size=2, early_stopping=True, num_return_sequences=1) # temperature=0.01, do_sample=True,
+        generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)
+        generated_text = [gen.strip() for gen in generated_text]
+        generated_texts.extend(generated_text)
+    
+    return generated_texts
+
+
+
+def get_parsed_content_icon_phi3v(filtered_boxes, ocr_bbox, image_source, caption_model_processor):
+    to_pil = ToPILImage()
+    if ocr_bbox:
+        non_ocr_boxes = filtered_boxes[len(ocr_bbox):]
+    else:
+        non_ocr_boxes = filtered_boxes
+    croped_pil_image = []
+    for i, coord in enumerate(non_ocr_boxes):
+        xmin, xmax = int(coord[0]*image_source.shape[1]), int(coord[2]*image_source.shape[1])
+        ymin, ymax = int(coord[1]*image_source.shape[0]), int(coord[3]*image_source.shape[0])
+        cropped_image = image_source[ymin:ymax, xmin:xmax, :]
+        croped_pil_image.append(to_pil(cropped_image))
+
+    model, processor = caption_model_processor['model'], caption_model_processor['processor']
+    device = model.device
+    messages = [{"role": "user", "content": "<|image_1|>\ndescribe the icon in one sentence"}] 
+    prompt = processor.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+
+    batch_size = 5  # Number of samples per batch
+    generated_texts = []
+
+    for i in range(0, len(croped_pil_image), batch_size):
+        images = croped_pil_image[i:i+batch_size]
+        image_inputs = [processor.image_processor(x, return_tensors="pt") for x in images]
+        inputs ={'input_ids': [], 'attention_mask': [], 'pixel_values': [], 'image_sizes': []}
+        texts = [prompt] * len(images)
+        for i, txt in enumerate(texts):
+            input = processor._convert_images_texts_to_inputs(image_inputs[i], txt, return_tensors="pt")
+            inputs['input_ids'].append(input['input_ids'])
+            inputs['attention_mask'].append(input['attention_mask'])
+            inputs['pixel_values'].append(input['pixel_values'])
+            inputs['image_sizes'].append(input['image_sizes'])
+        max_len = max([x.shape[1] for x in inputs['input_ids']])
+        for i, v in enumerate(inputs['input_ids']):
+            inputs['input_ids'][i] = torch.cat([processor.tokenizer.pad_token_id * torch.ones(1, max_len - v.shape[1], dtype=torch.long), v], dim=1)
+            inputs['attention_mask'][i] = torch.cat([torch.zeros(1, max_len - v.shape[1], dtype=torch.long), inputs['attention_mask'][i]], dim=1)
+        inputs_cat = {k: torch.concatenate(v).to(device) for k, v in inputs.items()}
+
+        generation_args = { 
+            "max_new_tokens": 25, 
+            "temperature": 0.01, 
+            "do_sample": False, 
+        } 
+        generate_ids = model.generate(**inputs_cat, eos_token_id=processor.tokenizer.eos_token_id, **generation_args) 
+        # # remove input tokens 
+        generate_ids = generate_ids[:, inputs_cat['input_ids'].shape[1]:]
+        response = processor.batch_decode(generate_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)
+        response = [res.strip('\n').strip() for res in response]
+        generated_texts.extend(response)
+
+    return generated_texts
+
+def remove_overlap(boxes, iou_threshold, ocr_bbox=None):
+    assert ocr_bbox is None or isinstance(ocr_bbox, List)
+
+    def box_area(box):
+        return (box[2] - box[0]) * (box[3] - box[1])
+
+    def intersection_area(box1, box2):
+        x1 = max(box1[0], box2[0])
+        y1 = max(box1[1], box2[1])
+        x2 = min(box1[2], box2[2])
+        y2 = min(box1[3], box2[3])
+        return max(0, x2 - x1) * max(0, y2 - y1)
+
+    def IoU(box1, box2):
+        intersection = intersection_area(box1, box2)
+        union = box_area(box1) + box_area(box2) - intersection + 1e-6
+        if box_area(box1) > 0 and box_area(box2) > 0:
+            ratio1 = intersection / box_area(box1)
+            ratio2 = intersection / box_area(box2)
+        else:
+            ratio1, ratio2 = 0, 0
+        return max(intersection / union, ratio1, ratio2)
+
+    def is_inside(box1, box2):
+        # return box1[0] >= box2[0] and box1[1] >= box2[1] and box1[2] <= box2[2] and box1[3] <= box2[3]
+        intersection = intersection_area(box1, box2)
+        ratio1 = intersection / box_area(box1)
+        return ratio1 > 0.95
+
+    boxes = boxes.tolist()
+    filtered_boxes = []
+    if ocr_bbox:
+        filtered_boxes.extend(ocr_bbox)
+    # print('ocr_bbox!!!', ocr_bbox)
+    for i, box1 in enumerate(boxes):
+        # if not any(IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2) for j, box2 in enumerate(boxes) if i != j):
+        is_valid_box = True
+        for j, box2 in enumerate(boxes):
+            # keep the smaller box
+            if i != j and IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2):
+                is_valid_box = False
+                break
+        if is_valid_box:
+            # add the following 2 lines to include ocr bbox
+            if ocr_bbox:
+                # only add the box if it does not overlap with any ocr bbox
+                if not any(IoU(box1, box3) > iou_threshold and not is_inside(box1, box3) for k, box3 in enumerate(ocr_bbox)):
+                    filtered_boxes.append(box1)
+            else:
+                filtered_boxes.append(box1)
+    return torch.tensor(filtered_boxes)
+
+
+def remove_overlap_new(boxes, iou_threshold, ocr_bbox=None):
+    '''
+    ocr_bbox format: [{'type': 'text', 'bbox':[x,y], 'interactivity':False, 'content':str }, ...]
+    boxes format: [{'type': 'icon', 'bbox':[x,y], 'interactivity':True, 'content':None }, ...]
+
+    '''
+    assert ocr_bbox is None or isinstance(ocr_bbox, List)
+
+    def box_area(box):
+        return (box[2] - box[0]) * (box[3] - box[1])
+
+    def intersection_area(box1, box2):
+        x1 = max(box1[0], box2[0])
+        y1 = max(box1[1], box2[1])
+        x2 = min(box1[2], box2[2])
+        y2 = min(box1[3], box2[3])
+        return max(0, x2 - x1) * max(0, y2 - y1)
+
+    def IoU(box1, box2):
+        intersection = intersection_area(box1, box2)
+        union = box_area(box1) + box_area(box2) - intersection + 1e-6
+        if box_area(box1) > 0 and box_area(box2) > 0:
+            ratio1 = intersection / box_area(box1)
+            ratio2 = intersection / box_area(box2)
+        else:
+            ratio1, ratio2 = 0, 0
+        return max(intersection / union, ratio1, ratio2)
+
+    def is_inside(box1, box2):
+        # return box1[0] >= box2[0] and box1[1] >= box2[1] and box1[2] <= box2[2] and box1[3] <= box2[3]
+        intersection = intersection_area(box1, box2)
+        ratio1 = intersection / box_area(box1)
+        return ratio1 > 0.80
+
+    # boxes = boxes.tolist()
+    filtered_boxes = []
+    if ocr_bbox:
+        filtered_boxes.extend(ocr_bbox)
+    # print('ocr_bbox!!!', ocr_bbox)
+    for i, box1_elem in enumerate(boxes):
+        box1 = box1_elem['bbox']
+        is_valid_box = True
+        for j, box2_elem in enumerate(boxes):
+            # keep the smaller box
+            box2 = box2_elem['bbox']
+            if i != j and IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2):
+                is_valid_box = False
+                break
+        if is_valid_box:
+            # add the following 2 lines to include ocr bbox
+            if ocr_bbox:
+                # keep yolo boxes + prioritize ocr label
+                box_added = False
+                for box3_elem in ocr_bbox:
+                    if not box_added:
+                        box3 = box3_elem['bbox']
+                        if is_inside(box3, box1): # ocr inside icon
+                            # box_added = True
+                            # delete the box3_elem from ocr_bbox
+                            try:
+                                filtered_boxes.append({'type': 'text', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': box3_elem['content']})
+                                filtered_boxes.remove(box3_elem)
+                                # print('remove ocr bbox:', box3_elem)
+                            except:
+                                continue
+                            # break
+                        elif is_inside(box1, box3): # icon inside ocr
+                            box_added = True
+                            # try:
+                            #     filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
+                            #     filtered_boxes.remove(box3_elem)
+                            # except:
+                            #     continue
+                            break
+                        else:
+                            continue
+                if not box_added:
+                    filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
+                            
+            else:
+                filtered_boxes.append(box1)
+    return filtered_boxes # torch.tensor(filtered_boxes)
+
+
+def load_image(image_path: str) -> Tuple[np.array, torch.Tensor]:
+    transform = T.Compose(
+        [
+            T.RandomResize([800], max_size=1333),
+            T.ToTensor(),
+            T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+    image_source = Image.open(image_path).convert("RGB")
+    image = np.asarray(image_source)
+    image_transformed, _ = transform(image_source, None)
+    return image, image_transformed
+
+
+def annotate(image_source: np.ndarray, boxes: torch.Tensor, logits: torch.Tensor, phrases: List[str], text_scale: float, 
+             text_padding=5, text_thickness=2, thickness=3) -> np.ndarray:
+    """    
+    This function annotates an image with bounding boxes and labels.
+
+    Parameters:
+    image_source (np.ndarray): The source image to be annotated.
+    boxes (torch.Tensor): A tensor containing bounding box coordinates. in cxcywh format, pixel scale
+    logits (torch.Tensor): A tensor containing confidence scores for each bounding box.
+    phrases (List[str]): A list of labels for each bounding box.
+    text_scale (float): The scale of the text to be displayed. 0.8 for mobile/web, 0.3 for desktop # 0.4 for mind2web
+
+    Returns:
+    np.ndarray: The annotated image.
+    """
+    h, w, _ = image_source.shape
+    boxes = boxes * torch.Tensor([w, h, w, h])
+    xyxy = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xyxy").numpy()
+    xywh = box_convert(boxes=boxes, in_fmt="cxcywh", out_fmt="xywh").numpy()
+    detections = sv.Detections(xyxy=xyxy)
+
+    labels = [f"{phrase}" for phrase in range(boxes.shape[0])]
+
+    from util.box_annotator import BoxAnnotator 
+    box_annotator = BoxAnnotator(text_scale=text_scale, text_padding=text_padding,text_thickness=text_thickness,thickness=thickness) # 0.8 for mobile/web, 0.3 for desktop # 0.4 for mind2web
+    annotated_frame = image_source.copy()
+    annotated_frame = box_annotator.annotate(scene=annotated_frame, detections=detections, labels=labels, image_size=(w,h))
+
+    label_coordinates = {f"{phrase}": v for phrase, v in zip(phrases, xywh)}
+    return annotated_frame, label_coordinates
+
+
+def predict(model, image, caption, box_threshold, text_threshold):
+    """ Use huggingface model to replace the original model
+    """
+    model, processor = model['model'], model['processor']
+    device = model.device
+
+    inputs = processor(images=image, text=caption, return_tensors="pt").to(device)
+    with torch.no_grad():
+        outputs = model(**inputs)
+
+    results = processor.post_process_grounded_object_detection(
+        outputs,
+        inputs.input_ids,
+        box_threshold=box_threshold, # 0.4,
+        text_threshold=text_threshold, # 0.3,
+        target_sizes=[image.size[::-1]]
+    )[0]
+    boxes, logits, phrases = results["boxes"], results["scores"], results["labels"]
+    return boxes, logits, phrases
+
+
+def predict_yolo(model, image_path, box_threshold, imgsz, scale_img, iou_threshold=0.7):
+    """ Use huggingface model to replace the original model
+    """
+    # model = model['model']
+    if scale_img:
+        result = model.predict(
+        source=image_path,
+        conf=box_threshold,
+        imgsz=imgsz,
+        iou=iou_threshold, # default 0.7
+        )
+    else:
+        result = model.predict(
+        source=image_path,
+        conf=box_threshold,
+        iou=iou_threshold, # default 0.7
+        )
+    boxes = result[0].boxes.xyxy#.tolist() # in pixel space
+    conf = result[0].boxes.conf
+    phrases = [str(i) for i in range(len(boxes))]
+
+    return boxes, conf, phrases
+
+
+def get_som_labeled_img(img_path, model=None, BOX_TRESHOLD = 0.01, output_coord_in_ratio=False, ocr_bbox=None, text_scale=0.4, text_padding=5, draw_bbox_config=None, caption_model_processor=None, ocr_text=[], use_local_semantics=True, iou_threshold=0.9,prompt=None, scale_img=False, imgsz=None, batch_size=None):
+    """ ocr_bbox: list of xyxy format bbox
+    """
+    image_source = Image.open(img_path).convert("RGB")
+    w, h = image_source.size
+    if not imgsz:
+        imgsz = (h, w)
+    # print('image size:', w, h)
+    xyxy, logits, phrases = predict_yolo(model=model, image_path=img_path, box_threshold=BOX_TRESHOLD, imgsz=imgsz, scale_img=scale_img, iou_threshold=0.1)
+    xyxy = xyxy / torch.Tensor([w, h, w, h]).to(xyxy.device)
+    image_source = np.asarray(image_source)
+    phrases = [str(i) for i in range(len(phrases))]
+
+    # annotate the image with labels
+    h, w, _ = image_source.shape
+    if ocr_bbox:
+        ocr_bbox = torch.tensor(ocr_bbox) / torch.Tensor([w, h, w, h])
+        ocr_bbox=ocr_bbox.tolist()
+    else:
+        print('no ocr bbox!!!')
+        ocr_bbox = None
+    # filtered_boxes = remove_overlap(boxes=xyxy, iou_threshold=iou_threshold, ocr_bbox=ocr_bbox)
+    # starting_idx = len(ocr_bbox)
+    # print('len(filtered_boxes):', len(filtered_boxes), starting_idx)
+
+    ocr_bbox_elem = [{'type': 'text', 'bbox':box, 'interactivity':False, 'content':txt} for box, txt in zip(ocr_bbox, ocr_text)]
+    xyxy_elem = [{'type': 'icon', 'bbox':box, 'interactivity':True, 'content':None} for box in xyxy.tolist()]
+    filtered_boxes = remove_overlap_new(boxes=xyxy_elem, iou_threshold=iou_threshold, ocr_bbox=ocr_bbox_elem)
+    
+    # sort the filtered_boxes so that the one with 'content': None is at the end, and get the index of the first 'content': None
+    filtered_boxes_elem = sorted(filtered_boxes, key=lambda x: x['content'] is None)
+    # get the index of the first 'content': None
+    starting_idx = next((i for i, box in enumerate(filtered_boxes_elem) if box['content'] is None), -1)
+    filtered_boxes = torch.tensor([box['bbox'] for box in filtered_boxes_elem])
+
+    
+    # get parsed icon local semantics
+    if use_local_semantics:
+        caption_model = caption_model_processor['model']
+        if 'phi3_v' in caption_model.config.model_type: 
+            parsed_content_icon = get_parsed_content_icon_phi3v(filtered_boxes, ocr_bbox, image_source, caption_model_processor)
+        else:
+            parsed_content_icon = get_parsed_content_icon(filtered_boxes, starting_idx, image_source, caption_model_processor, prompt=prompt,batch_size=batch_size)
+        ocr_text = [f"Text Box ID {i}: {txt}" for i, txt in enumerate(ocr_text)]
+        icon_start = len(ocr_text)
+        parsed_content_icon_ls = []
+        # fill the filtered_boxes_elem None content with parsed_content_icon in order
+        for i, box in enumerate(filtered_boxes_elem):
+            if box['content'] is None:
+                box['content'] = parsed_content_icon.pop(0)
+        for i, txt in enumerate(parsed_content_icon):
+            parsed_content_icon_ls.append(f"Icon Box ID {str(i+icon_start)}: {txt}")
+        parsed_content_merged = ocr_text + parsed_content_icon_ls
+    else:
+        ocr_text = [f"Text Box ID {i}: {txt}" for i, txt in enumerate(ocr_text)]
+        parsed_content_merged = ocr_text
+
+    filtered_boxes = box_convert(boxes=filtered_boxes, in_fmt="xyxy", out_fmt="cxcywh")
+
+    phrases = [i for i in range(len(filtered_boxes))]
+    
+    # draw boxes
+    if draw_bbox_config:
+        annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=filtered_boxes, logits=logits, phrases=phrases, **draw_bbox_config)
+    else:
+        annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=filtered_boxes, logits=logits, phrases=phrases, text_scale=text_scale, text_padding=text_padding)
+    
+    pil_img = Image.fromarray(annotated_frame)
+    buffered = io.BytesIO()
+    pil_img.save(buffered, format="PNG")
+    encoded_image = base64.b64encode(buffered.getvalue()).decode('ascii')
+    if output_coord_in_ratio:
+        # h, w, _ = image_source.shape
+        label_coordinates = {k: [v[0]/w, v[1]/h, v[2]/w, v[3]/h] for k, v in label_coordinates.items()}
+        assert w == annotated_frame.shape[1] and h == annotated_frame.shape[0]
+
+    return encoded_image, label_coordinates, filtered_boxes_elem
+
+
+def get_xywh(input):
+    x, y, w, h = input[0][0], input[0][1], input[2][0] - input[0][0], input[2][1] - input[0][1]
+    x, y, w, h = int(x), int(y), int(w), int(h)
+    return x, y, w, h
+
+def get_xyxy(input):
+    x, y, xp, yp = input[0][0], input[0][1], input[2][0], input[2][1]
+    x, y, xp, yp = int(x), int(y), int(xp), int(yp)
+    return x, y, xp, yp
+
+def get_xywh_yolo(input):
+    x, y, w, h = input[0], input[1], input[2] - input[0], input[3] - input[1]
+    x, y, w, h = int(x), int(y), int(w), int(h)
+    return x, y, w, h
+    
+
+
+def check_ocr_box(image_path, display_img = True, output_bb_format='xywh', goal_filtering=None, easyocr_args=None, use_paddleocr=False):
+    if use_paddleocr:
+        if easyocr_args is None:
+            text_threshold = 0.5
+        else:
+            text_threshold = easyocr_args['text_threshold']
+        result = paddle_ocr.ocr(image_path, cls=False)[0]
+        conf = [item[1] for item in result]
+        coord = [item[0] for item in result if item[1][1] > text_threshold]
+        text = [item[1][0] for item in result if item[1][1] > text_threshold]
+    else:  # EasyOCR
+        if easyocr_args is None:
+            easyocr_args = {}
+        result = reader.readtext(image_path, **easyocr_args)
+        # print('goal filtering pred:', result[-5:])
+        coord = [item[0] for item in result]
+        text = [item[1] for item in result]
+    # read the image using cv2
+    if display_img:
+        opencv_img = cv2.imread(image_path)
+        opencv_img = cv2.cvtColor(opencv_img, cv2.COLOR_RGB2BGR)
+        bb = []
+        for item in coord:
+            x, y, a, b = get_xywh(item)
+            # print(x, y, a, b)
+            bb.append((x, y, a, b))
+            cv2.rectangle(opencv_img, (x, y), (x+a, y+b), (0, 255, 0), 2)
+        
+        # Display the image
+        plt.imshow(opencv_img)
+    else:
+        if output_bb_format == 'xywh':
+            bb = [get_xywh(item) for item in coord]
+        elif output_bb_format == 'xyxy':
+            bb = [get_xyxy(item) for item in coord]
+        # print('bounding box!!!', bb)
+    return (text, bb), goal_filtering
+
+
+
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/new_requirements.txt`:
+
+```txt
+accelerate==1.3.0
+aiofiles==23.2.1
+albucore==0.0.13
+albumentations==1.4.10
+annotated-types==0.7.0
+anyio==3.7.1
+appnope==0.1.4
+argon2-cffi==23.1.0
+argon2-cffi-bindings==21.2.0
+arrow==1.3.0
+astor==0.8.1
+asttokens==3.0.0
+async-lru==2.0.4
+attrs==24.3.0
+azure-core==1.32.0
+azure-identity==1.19.0
+babel==2.16.0
+beautifulsoup4==4.12.3
+bleach==6.2.0
+certifi==2024.12.14
+cffi==1.17.1
+charset-normalizer==3.4.1
+click==8.1.8
+comm==0.2.2
+contourpy==1.3.1
+cryptography==44.0.0
+cycler==0.12.1
+Cython==3.0.11
+debugpy==1.8.12
+decorator==5.1.1
+defusedxml==0.7.1
+dill==0.3.9
+distro==1.9.0
+easyocr==1.7.2
+einops==0.8.0
+executing==2.2.0
+fastapi==0.115.7
+fastjsonschema==2.21.1
+ffmpy==0.5.0
+filelock==3.17.0
+fire==0.7.0
+fonttools==4.55.5
+fqdn==1.5.1
+fsspec==2024.12.0
+gradio==5.13.0
+gradio_client==1.6.0
+h11==0.14.0
+httpcore==1.0.7
+httpx==0.28.1
+huggingface-hub==0.27.1
+idna==3.10
+imageio==2.37.0
+imgaug==0.4.0
+ipykernel==6.29.5
+ipython==8.31.0
+isoduration==20.11.0
+jedi==0.19.2
+Jinja2==3.1.5
+joblib==1.4.2
+json5==0.10.0
+jsonpointer==3.0.0
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
+jupyter-events==0.11.0
+jupyter-lsp==2.2.5
+jupyter_client==8.6.3
+jupyter_core==5.7.2
+jupyter_server==2.15.0
+jupyter_server_terminals==0.5.3
+jupyterlab==4.3.4
+jupyterlab_pygments==0.3.0
+jupyterlab_server==2.27.3
+kiwisolver==1.4.8
+lazy_loader==0.4
+lmdb==1.6.2
+lxml==5.3.0
+markdown-it-py==3.0.0
+markupsafe>=2.0,<3.dev0
+matplotlib==3.10.0
+matplotlib-inline==0.1.7
+mdurl==0.1.2
+mistune==3.1.0
+mpmath==1.3.0
+msal==1.31.1
+msal-extensions==1.2.0
+nbclient==0.10.2
+nbconvert==7.16.5
+nbformat==5.10.4
+nest-asyncio==1.6.0
+networkx==3.4.2
+ninja==1.11.1.3
+notebook==7.3.2
+notebook_shim==0.2.4
+numpy==1.26.4
+openai==1.3.5
+opencv-contrib-python==4.11.0.86
+opencv-python==4.11.0.86
+opencv-python-headless==4.11.0.86
+opt-einsum==3.3.0
+orjson==3.10.15
+overrides==7.7.0
+packaging==24.2
+paddleocr==2.9.1
+paddlepaddle==2.6.2
+pandas==2.2.3
+pandocfilters==1.5.1
+parso==0.8.4
+pexpect==4.9.0
+pillow==11.1.0
+platformdirs==4.3.6
+portalocker==2.10.1
+prometheus_client==0.21.1
+prompt_toolkit==3.0.50
+protobuf==5.29.3
+psutil==6.1.1
+ptyprocess==0.7.0
+pure_eval==0.2.3
+py-cpuinfo==9.0.0
+pyclipper==1.3.0.post6
+pycparser==2.22
+pydantic==2.10.5
+pydantic_core==2.27.2
+pydub==0.25.1
+Pygments==2.19.1
+PyJWT==2.10.1
+pyparsing==3.2.1
+python-bidi==0.6.3
+python-dateutil==2.9.0.post0
+python-docx==1.1.2
+python-json-logger==3.2.1
+python-multipart==0.0.20
+pytz==2024.2
+PyYAML==6.0.2
+pyzmq==26.2.0
+RapidFuzz==3.11.0
+referencing==0.36.1
+regex==2024.11.6
+requests==2.32.3
+rfc3339-validator==0.1.4
+rfc3986-validator==0.1.1
+rich==13.9.4
+rpds-py==0.22.3
+ruff==0.9.2
+safehttpx==0.1.6
+safetensors==0.5.2
+scikit-image==0.25.0
+scikit-learn==1.6.1
+scipy==1.15.1
+seaborn==0.13.2
+semantic-version==2.10.0
+Send2Trash==1.8.3
+setuptools==75.8.0
+shapely==2.0.6
+shellingham==1.5.4
+six==1.17.0
+sniffio==1.3.1
+soupsieve==2.6
+stack-data==0.6.3
+starlette==0.45.2
+supervision==0.18.0
+sympy==1.13.1
+termcolor==2.5.0
+terminado==0.18.1
+thop==0.1.1.post2209072238
+threadpoolctl==3.5.0
+tifffile==2025.1.10
+timm==1.0.14
+tinycss2==1.4.0
+tokenizers==0.21.0
+tomli==2.2.1
+tomlkit==0.13.2
+torch==2.5.1
+torchvision==0.20.1
+tornado==6.4.2
+tqdm==4.67.1
+traitlets==5.14.3
+transformers==4.48.1
+typer==0.15.1
+types-python-dateutil==2.9.0.20241206
+typing_extensions==4.12.2
+tzdata==2025.1
+ultralytics==8.3.66
+ultralytics-thop==2.0.14
+uri-template==1.3.0
+urllib3==2.3.0
+uv==0.5.23
+uvicorn==0.34.0
+wcwidth==0.2.13
+webcolors==24.11.1
+webencodings==0.5.1
+websocket-client==1.8.0
+websockets==14.2
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/omniparser.py`:
+
+```py
+from utils import get_som_labeled_img, check_ocr_box, get_caption_model_processor,  get_dino_model, get_yolo_model
+import torch
+from ultralytics import YOLO
+from PIL import Image
+from typing import Dict, Tuple, List
+import io
+import base64
+
+
+config = {
+    'som_model_path': 'finetuned_icon_detect.pt',
+    'device': 'cpu',
+    'caption_model_path': 'Salesforce/blip2-opt-2.7b',
+    'draw_bbox_config': {
+        'text_scale': 0.8,
+        'text_thickness': 2,
+        'text_padding': 3,
+        'thickness': 3,
+    },
+    'BOX_TRESHOLD': 0.05
+}
+
+
+class Omniparser(object):
+    def __init__(self, config: Dict):
+        self.config = config
+        
+        self.som_model = get_yolo_model(model_path=config['som_model_path'])
+        # self.caption_model_processor = get_caption_model_processor(config['caption_model_path'], device=cofig['device'])
+        # self.caption_model_processor['model'].to(torch.float32)
+
+    def parse(self, image_path: str):
+        print('Parsing image:', image_path)
+        ocr_bbox_rslt, is_goal_filtered = check_ocr_box(image_path, display_img = False, output_bb_format='xyxy', goal_filtering=None, easyocr_args={'paragraph': False, 'text_threshold':0.9})
+        text, ocr_bbox = ocr_bbox_rslt
+
+        draw_bbox_config = self.config['draw_bbox_config']
+        BOX_TRESHOLD = self.config['BOX_TRESHOLD']
+        dino_labled_img, label_coordinates, parsed_content_list = get_som_labeled_img(image_path, self.som_model, BOX_TRESHOLD = BOX_TRESHOLD, output_coord_in_ratio=False, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=None, ocr_text=text,use_local_semantics=False)
+        
+        image = Image.open(io.BytesIO(base64.b64decode(dino_labled_img)))
+        # formating output
+        return_list = [{'from': 'omniparser', 'shape': {'x':coord[0], 'y':coord[1], 'width':coord[2], 'height':coord[3]},
+                        'text': parsed_content_list[i].split(': ')[1], 'type':'text'} for i, (k, coord) in enumerate(label_coordinates.items()) if i < len(parsed_content_list)]
+        return_list.extend(
+            [{'from': 'omniparser', 'shape': {'x':coord[0], 'y':coord[1], 'width':coord[2], 'height':coord[3]},
+                        'text': 'None', 'type':'icon'} for i, (k, coord) in enumerate(label_coordinates.items()) if i >= len(parsed_content_list)]
+              )
+
+        return [image, return_list]
+    
+parser = Omniparser(config)
+image_path = 'examples/pc_1.png'
+
+#  time the parser
+import time
+s = time.time()
+image, parsed_content_list = parser.parse(image_path)
+device = config['device']
+print(f'Time taken for Omniparser on {device}:', time.time() - s)
+
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/gradio_demo.py`:
+
+```py
+from typing import Optional
+
+import gradio as gr
+import numpy as np
+import torch
+from PIL import Image
+import io
+
+
+import base64, os
+from utils import check_ocr_box, get_yolo_model, get_caption_model_processor, get_som_labeled_img
+import torch
+from PIL import Image
+import argparse
+
+
+
+MARKDOWN = """
+# OmniParser for Pure Vision Based General GUI Agent 🔥
+<div>
+    <a href="https://arxiv.org/pdf/2408.00203">
+        <img src="https://img.shields.io/badge/arXiv-2408.00203-b31b1b.svg" alt="Arxiv" style="display:inline-block;">
+    </a>
+</div>
+
+OmniParser is a screen parsing tool to convert general GUI screen to structured elements. 
+"""
+
+DEVICE = torch.device('cuda')
+
+# @spaces.GPU
+# @torch.inference_mode()
+# @torch.autocast(device_type="cuda", dtype=torch.bfloat16)
+def process(
+    image_input,
+    box_threshold,
+    iou_threshold,
+    use_paddleocr,
+    imgsz,
+    icon_process_batch_size,
+) -> Optional[Image.Image]:
+    image_save_path = 'imgs/saved_image_demo.png'
+    image_input.save(image_save_path)
+    image = Image.open(image_save_path)
+    box_overlay_ratio = image.size[0] / 3200
+    draw_bbox_config = {
+        'text_scale': 0.8 * box_overlay_ratio,
+        'text_thickness': max(int(2 * box_overlay_ratio), 1),
+        'text_padding': max(int(3 * box_overlay_ratio), 1),
+        'thickness': max(int(3 * box_overlay_ratio), 1),
+    }
+    # import pdb; pdb.set_trace()
+
+    ocr_bbox_rslt, is_goal_filtered = check_ocr_box(image_save_path, display_img = False, output_bb_format='xyxy', goal_filtering=None, easyocr_args={'paragraph': False, 'text_threshold':0.9}, use_paddleocr=use_paddleocr)
+    text, ocr_bbox = ocr_bbox_rslt
+    # print('prompt:', prompt)
+    dino_labled_img, label_coordinates, parsed_content_list = get_som_labeled_img(image_save_path, yolo_model, BOX_TRESHOLD = box_threshold, output_coord_in_ratio=True, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=caption_model_processor, ocr_text=text,iou_threshold=iou_threshold, imgsz=imgsz, batch_size=icon_process_batch_size)  
+    image = Image.open(io.BytesIO(base64.b64decode(dino_labled_img)))
+    print('finish processing')
+    # parsed_content_list = '\n'.join(parsed_content_list)
+    parsed_content_list = '\n'.join([f'type: {x['type']}, content: {x["content"]}, interactivity: {x["interactivity"]}' for x in parsed_content_list])
+    return image, str(parsed_content_list)
+
+
+parser = argparse.ArgumentParser(description='Process model paths and names.')
+parser.add_argument('--icon_detect_model', type=str, required=True, default='weights/icon_detect/best.pt', help='Path to the YOLO model weights')
+parser.add_argument('--icon_caption_model', type=str, required=True, default='florence2',  help='Name of the caption model')
+
+args = parser.parse_args()
+icon_detect_model, icon_caption_model = args.icon_detect_model, args.icon_caption_model
+
+yolo_model = get_yolo_model(model_path=icon_detect_model)
+if icon_caption_model == 'florence2':
+    caption_model_processor = get_caption_model_processor(model_name="florence2", model_name_or_path="weights/icon_caption_florence")
+elif icon_caption_model == 'blip2':
+    caption_model_processor = get_caption_model_processor(model_name="blip2", model_name_or_path="weights/icon_caption_blip2")
+
+with gr.Blocks() as demo:
+    gr.Markdown(MARKDOWN)
+    with gr.Row():
+        with gr.Column():
+            image_input_component = gr.Image(
+                type='pil', label='Upload image')
+            # set the threshold for removing the bounding boxes with low confidence, default is 0.05
+            box_threshold_component = gr.Slider(
+                label='Box Threshold', minimum=0.01, maximum=1.0, step=0.01, value=0.05)
+            # set the threshold for removing the bounding boxes with large overlap, default is 0.1
+            iou_threshold_component = gr.Slider(
+                label='IOU Threshold', minimum=0.01, maximum=1.0, step=0.01, value=0.1)
+            use_paddleocr_component = gr.Checkbox(
+                label='Use PaddleOCR', value=False)
+            imgsz_component = gr.Slider(
+                label='Icon Detect Image Size', minimum=640, maximum=3200, step=32, value=1920)
+            icon_process_batch_size_component = gr.Slider(
+                label='Icon Process Batch Size', minimum=1, maximum=256, step=1, value=64)
+            submit_button_component = gr.Button(
+                value='Submit', variant='primary')
+        with gr.Column():
+            image_output_component = gr.Image(type='pil', label='Image Output')
+            text_output_component = gr.Textbox(label='Parsed screen elements', placeholder='Text Output')
+
+    submit_button_component.click(
+        fn=process,
+        inputs=[
+            image_input_component,
+            box_threshold_component,
+            iou_threshold_component,
+            use_paddleocr_component,
+            imgsz_component,
+            icon_process_batch_size_component
+        ],
+        outputs=[image_output_component, text_output_component]
+    )
+
+# demo.launch(debug=False, show_error=True, share=True)
+demo.launch(share=True, server_port=7861, server_name='0.0.0.0')
+
+
+
+# python gradio_demo.py --icon_detect_model weights/icon_detect/best.pt --icon_caption_model florence2
+# python gradio_demo.py --icon_detect_model weights/icon_detect_v1_5/model_v1_5.pt --icon_caption_model florence2
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/demo.py`:
+
+```py
+from utils import get_som_labeled_img, check_ocr_box, get_caption_model_processor, get_yolo_model
+import torch
+from ultralytics import YOLO
+from PIL import Image
+import pandas as pd
+import importlib
+import utils
+importlib.reload(utils)
+import importlib
+import utils
+importlib.reload(utils)
+import time
+import os
+
+os.environ["GLOG_v"] = "3"
+os.environ["GLOG_logtostderr"] = "1"
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model_path='weights/icon_detect_v1_5/model_v1_5.pt'
+
+som_model = get_yolo_model(model_path)
+
+som_model.to(device)
+print('model to {}'.format(device))
+
+# two choices for caption model: fine-tuned blip2 or florence2
+# caption_model_processor = get_caption_model_processor(model_name="blip2", model_name_or_path="weights/icon_caption_blip2", device=device)
+caption_model_processor = get_caption_model_processor(model_name="florence2", model_name_or_path="weights/icon_caption_florence", device=device)
+
+# reload utils
+
+image_path = 'imgs/google_page.png'
+image_path = 'imgs/windows_home.png'
+# image_path = 'imgs/windows_multitab.png'
+# image_path = 'imgs/omni3.jpg'
+# image_path = 'imgs/ios.png'
+image_path = 'imgs/word.png'
+# image_path = 'imgs/excel2.png'
+
+image = Image.open(image_path)
+image_rgb = image.convert('RGB')
+print('image size:', image.size)
+
+box_overlay_ratio = max(image.size) / 3200
+draw_bbox_config = {
+    'text_scale': 0.8 * box_overlay_ratio,
+    'text_thickness': max(int(2 * box_overlay_ratio), 1),
+    'text_padding': max(int(3 * box_overlay_ratio), 1),
+    'thickness': max(int(3 * box_overlay_ratio), 1),
+}
+BOX_TRESHOLD = 0.05
+
+print("Starting ocr pipeline")
+start = time.time()
+ocr_bbox_rslt, is_goal_filtered = check_ocr_box(image_path, display_img = False, output_bb_format='xyxy', goal_filtering=None, easyocr_args={'paragraph': False, 'text_threshold':0.8}, use_paddleocr=True)
+text, ocr_bbox = ocr_bbox_rslt
+cur_time_ocr = time.time()
+print(f"ocr time: {cur_time_ocr - start}")
+
+print("Starting labeling pipeline")
+cur_time_caption = time.time() 
+dino_labled_img, label_coordinates, parsed_content_list = get_som_labeled_img(image_path, som_model, BOX_TRESHOLD = BOX_TRESHOLD, output_coord_in_ratio=True, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=caption_model_processor, ocr_text=text,use_local_semantics=True, iou_threshold=0.7, scale_img=False, batch_size=128)
+print(f"labelling time: {cur_time_caption - cur_time_ocr}")
+
+df = pd.DataFrame(parsed_content_list)
+df['ID'] = range(len(df))
+
+print(df)
+
+print(type(text), type(ocr_bbox), type(dino_labled_img), type(label_coordinates), type(parsed_content_list))
+print(text)
+print(ocr_bbox)
+print(dino_labled_img)
+print(label_coordinates)
+print(parsed_content_list)
+```
+
+`/Users/ribhavkapur/Desktop/everything/omega_labs/agents/OmniParser/SECURITY.md`:
+
+```md
+<!-- BEGIN MICROSOFT SECURITY.MD V0.0.9 BLOCK -->
+
+## Security
+
+Microsoft takes the security of our software products and services seriously, which includes all source code repositories managed through our GitHub organizations, which include [Microsoft](https://github.com/Microsoft), [Azure](https://github.com/Azure), [DotNet](https://github.com/dotnet), [AspNet](https://github.com/aspnet) and [Xamarin](https://github.com/xamarin).
+
+If you believe you have found a security vulnerability in any Microsoft-owned repository that meets [Microsoft's definition of a security vulnerability](https://aka.ms/security.md/definition), please report it to us as described below.
+
+## Reporting Security Issues
+
+**Please do not report security vulnerabilities through public GitHub issues.**
+
+Instead, please report them to the Microsoft Security Response Center (MSRC) at [https://msrc.microsoft.com/create-report](https://aka.ms/security.md/msrc/create-report).
+
+If you prefer to submit without logging in, send email to [secure@microsoft.com](mailto:secure@microsoft.com).  If possible, encrypt your message with our PGP key; please download it from the [Microsoft Security Response Center PGP Key page](https://aka.ms/security.md/msrc/pgp).
+
+You should receive a response within 24 hours. If for some reason you do not, please follow up via email to ensure we received your original message. Additional information can be found at [microsoft.com/msrc](https://www.microsoft.com/msrc). 
+
+Please include the requested information listed below (as much as you can provide) to help us better understand the nature and scope of the possible issue:
+
+  * Type of issue (e.g. buffer overflow, SQL injection, cross-site scripting, etc.)
+  * Full paths of source file(s) related to the manifestation of the issue
+  * The location of the affected source code (tag/branch/commit or direct URL)
+  * Any special configuration required to reproduce the issue
+  * Step-by-step instructions to reproduce the issue
+  * Proof-of-concept or exploit code (if possible)
+  * Impact of the issue, including how an attacker might exploit the issue
+
+This information will help us triage your report more quickly.
+
+If you are reporting for a bug bounty, more complete reports can contribute to a higher bounty award. Please visit our [Microsoft Bug Bounty Program](https://aka.ms/security.md/msrc/bounty) page for more details about our active programs.
+
+## Preferred Languages
+
+We prefer all communications to be in English.
+
+## Policy
+
+Microsoft follows the principle of [Coordinated Vulnerability Disclosure](https://aka.ms/security.md/cvd).
+
+<!-- END MICROSOFT SECURITY.MD BLOCK -->
+
+```
