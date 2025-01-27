@@ -13,3 +13,4 @@ paddle_ocr = PaddleOCR(
 
 # results = paddle_ocr.ocr(image_path, cls=True)
 result = paddle_ocr.ocr(image_path, cls=False)[0]
+print(result)
