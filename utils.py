@@ -64,6 +64,9 @@ def get_caption_model_processor(model_name, model_name_or_path="Salesforce/blip2
             model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=torch.float32, trust_remote_code=True)
         else:
             model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=torch.float16, trust_remote_code=True).to(device)
+    for name, param in model.named_parameters():
+        print(name, param.dtype)
+        break
     return {'model': model.to(device), 'processor': processor}
 
 

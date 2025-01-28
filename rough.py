@@ -14,3 +14,10 @@ paddle_ocr = PaddleOCR(
 # results = paddle_ocr.ocr(image_path, cls=True)
 result = paddle_ocr.ocr(image_path, cls=False)[0]
 print(result)
+
+# device = "cuda" if torch.cuda.is_available() else "cpu"
+# from utils import get_caption_model_processor
+# caption_model_processor = get_caption_model_processor(model_name="florence2", model_name_or_path="weights/icon_caption_florence", device=device)
+# model, processor = caption_model_processor['model'], caption_model_processor['processor']
+# inputs = processor(images=batch, text=[prompt]*len(batch), return_tensors="pt").to(device=device)
+# generated_ids = model.generate(input_ids=inputs["input_ids"],pixel_values=inputs["pixel_values"],max_new_tokens=100,num_beams=3, do_sample=False)
