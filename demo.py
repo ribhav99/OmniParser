@@ -11,6 +11,8 @@ import utils
 importlib.reload(utils)
 import time
 
+import os
+os.environ['PYTORCH_MPS_HIGH_WATERMARK_RATIO'] = '0.0'
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model_path='weights/icon_detect_v1_5/model_v1_5.pt'

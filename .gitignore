@@ -8,3 +8,4 @@ __pycache__/
 debug.ipynb
 venv/*
 venv_311/*
+*.pyc

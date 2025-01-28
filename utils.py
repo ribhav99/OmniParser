@@ -19,6 +19,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import easyocr
 from paddleocr import PaddleOCR
+from tqdm import tqdm
+
 reader = easyocr.Reader(['en'])
 paddle_ocr = PaddleOCR(
     lang='en',  # other lang also available
@@ -44,30 +46,39 @@ import torchvision.transforms as T
 
 
 def get_caption_model_processor(model_name, model_name_or_path="Salesforce/blip2-opt-2.7b", device=None):
+    import torch
+    
+    # Explicitly disable MPS
+    if hasattr(torch.backends, 'mps'):
+        torch.backends.mps.enabled = False
+    
     if not device:
         device = "cuda" if torch.cuda.is_available() else "cpu"
+    
     if model_name == "blip2":
         from transformers import Blip2Processor, Blip2ForConditionalGeneration
         processor = Blip2Processor.from_pretrained("Salesforce/blip2-opt-2.7b")
-        if device == 'cpu':
-            model = Blip2ForConditionalGeneration.from_pretrained(
-            model_name_or_path, device_map=None, torch_dtype=torch.float32
-        ) 
-        else:
-            model = Blip2ForConditionalGeneration.from_pretrained(
-            model_name_or_path, device_map=None, torch_dtype=torch.float16
-        ).to(device)
+        model = Blip2ForConditionalGeneration.from_pretrained(
+            model_name_or_path, 
+            device_map=None, 
+            torch_dtype=torch.float32
+        )
     elif model_name == "florence2":
-        from transformers import AutoProcessor, AutoModelForCausalLM 
+        from transformers import AutoProcessor, AutoModelForCausalLM
         processor = AutoProcessor.from_pretrained("microsoft/Florence-2-base", trust_remote_code=True)
-        if device == 'cpu':
-            model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=torch.float32, trust_remote_code=True)
-        else:
-            model = AutoModelForCausalLM.from_pretrained(model_name_or_path, torch_dtype=torch.float16, trust_remote_code=True).to(device)
-    for name, param in model.named_parameters():
-        print(name, param.dtype)
-        break
-    return {'model': model.to(device), 'processor': processor}
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name_or_path,
+            device_map={"": "cpu"},  # Force CPU device mapping
+            torch_dtype=torch.float32,
+            trust_remote_code=True
+        )
+        
+        # Ensure model is in eval mode and on CPU
+        model = model.eval()
+        for param in model.parameters():
+            param.data = param.data.to(device='cpu', dtype=torch.float32)
+    
+    return {'model': model.to('cpu'), 'processor': processor}
 
 
 def get_yolo_model(model_path):
@@ -79,13 +90,14 @@ def get_yolo_model(model_path):
 
 @torch.inference_mode()
 def get_parsed_content_icon(filtered_boxes, starting_idx, image_source, caption_model_processor, prompt=None, batch_size=32):
-    # Number of samples per batch, --> 256 roughly takes 23 GB of GPU memory for florence model
-
+    import time
+    
     to_pil = ToPILImage()
     if starting_idx:
         non_ocr_boxes = filtered_boxes[starting_idx:]
     else:
         non_ocr_boxes = filtered_boxes
+    
     croped_pil_image = []
     for i, coord in enumerate(non_ocr_boxes):
         xmin, xmax = int(coord[0]*image_source.shape[1]), int(coord[2]*image_source.shape[1])
@@ -101,22 +113,54 @@ def get_parsed_content_icon(filtered_boxes, starting_idx, image_source, caption_
             prompt = "The image shows"
     
     generated_texts = []
-    device = model.device
-    for i in range(0, len(croped_pil_image), batch_size):
-        start = time.time()
-        batch = croped_pil_image[i:i+batch_size]
-        if model.device.type == 'cuda':
-            inputs = processor(images=batch, text=[prompt]*len(batch), return_tensors="pt").to(device=device, dtype=torch.float16)
-        else:
-            inputs = processor(images=batch, text=[prompt]*len(batch), return_tensors="pt").to(device=device)
-        if 'florence' in model.config.name_or_path:
-            generated_ids = model.generate(input_ids=inputs["input_ids"],pixel_values=inputs["pixel_values"],max_new_tokens=100,num_beams=3, do_sample=False)
-        else:
-            generated_ids = model.generate(**inputs, max_length=100, num_beams=5, no_repeat_ngram_size=2, early_stopping=True, num_return_sequences=1) # temperature=0.01, do_sample=True,
-        generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)
-        generated_text = [gen.strip() for gen in generated_text]
-        generated_texts.extend(generated_text)
     
+    # Process one image at a time for stability
+    # Create progress bar for image processing
+    pbar = tqdm(total=len(croped_pil_image), desc="Processing images")
+    for i, img in enumerate(croped_pil_image):
+        try: 
+            # Process single image
+            inputs = processor(
+                images=[img],
+                text=[prompt],
+                return_tensors="pt"
+            )
+            
+            # Ensure inputs are on CPU
+            inputs = {k: v.to('cpu') for k, v in inputs.items()}
+            
+            if 'florence' in model.config.name_or_path:
+                generated_ids = model.generate(
+                    input_ids=inputs["input_ids"],
+                    pixel_values=inputs["pixel_values"],
+                    max_new_tokens=100,
+                    num_beams=3,
+                    do_sample=False,
+                    pad_token_id=processor.tokenizer.pad_token_id
+                )
+            else:
+                generated_ids = model.generate(
+                    **inputs,
+                    max_length=100,
+                    num_beams=5,
+                    no_repeat_ngram_size=2,
+                    early_stopping=True,
+                    num_return_sequences=1
+                )
+            
+            generated_text = processor.batch_decode(generated_ids, skip_special_tokens=True)
+            generated_text = [gen.strip() for gen in generated_text]
+            generated_texts.extend(generated_text)
+            
+            # Small delay between processing
+            pbar.update(1)
+            
+        except Exception as e:
+            print(f"Error processing image {i}: {str(e)}")
+            generated_texts.append("Error processing image")
+            continue
+    
+    pbar.close()
     return generated_texts
 
 
