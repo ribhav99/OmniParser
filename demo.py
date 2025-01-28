@@ -28,13 +28,7 @@ caption_model_processor = get_caption_model_processor(model_name="florence2", mo
 
 # reload utils
 
-image_path = 'imgs/google_page.png'
-image_path = 'imgs/windows_home.png'
-# image_path = 'imgs/windows_multitab.png'
-# image_path = 'imgs/omni3.jpg'
-# image_path = 'imgs/ios.png'
-image_path = 'imgs/word.png'
-# image_path = 'imgs/excel2.png'
+image_path = 'imgs/canva.png'
 
 image = Image.open(image_path)
 image_rgb = image.convert('RGB')
@@ -58,7 +52,8 @@ print(f"ocr time: {cur_time_ocr - start}")
 
 print("Starting labeling pipeline")
 cur_time_caption = time.time() 
-dino_labled_img, label_coordinates, parsed_content_list = get_som_labeled_img(image_path, som_model, BOX_TRESHOLD = BOX_TRESHOLD, output_coord_in_ratio=True, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=caption_model_processor, ocr_text=text,use_local_semantics=True, iou_threshold=0.7, scale_img=False, batch_size=128)
+dino_labled_img, label_coordinates, parsed_content_list, imgsz_hw = get_som_labeled_img(image_path, som_model, BOX_TRESHOLD = BOX_TRESHOLD, output_coord_in_ratio=True, ocr_bbox=ocr_bbox,draw_bbox_config=draw_bbox_config, caption_model_processor=caption_model_processor, ocr_text=text,use_local_semantics=True, iou_threshold=0.7, scale_img=False, batch_size=128, return_shape=True)
+# dino_labled_img, label_coordinates, parsed_content_list, imgsz_hw = get_som_labeled_img(image_path, som_model, BOX_TRESHOLD = BOX_TRESHOLD, output_coord_in_ratio=True, ocr_bbox=None,draw_bbox_config=draw_bbox_config, caption_model_processor=caption_model_processor, ocr_text=[],use_local_semantics=True, iou_threshold=0.7, scale_img=False, batch_size=128, return_shape=True)
 print(f"labelling time: {cur_time_caption - cur_time_ocr}")
 
 df = pd.DataFrame(parsed_content_list)
@@ -66,9 +61,28 @@ df['ID'] = range(len(df))
 
 print(df)
 
-print(type(text), type(ocr_bbox), type(dino_labled_img), type(label_coordinates), type(parsed_content_list))
-print(text)
-print(ocr_bbox)
-print(dino_labled_img)
-print(label_coordinates)
-print(parsed_content_list)
+# print(type(text), type(ocr_bbox), type(dino_labled_img), type(label_coordinates), type(parsed_content_list), "\n\n")
+# print(text, "\n\n")
+# print(ocr_bbox, "\n\n")
+print(df.shape)
+# print(len(text), len(ocr_bbox))
+# print(text[29], ocr_bbox[29])
+# Count occurrences of 'icon' and 'text' in type column
+icon_count = len(df[df['type'] == 'icon'])
+text_count = len(df[df['type'] == 'text'])
+print(f"\nNumber of icons: {icon_count}")
+print(f"Number of text boxes: {text_count}")
+
+
+# print(dino_labled_img, "\n\n")
+# print(label_coordinates, "\n\n")
+# print(parsed_content_list, "\n\n")
+
+import io
+import base64
+
+image = Image.open(io.BytesIO(base64.b64decode(dino_labled_img)))
+output_dir = 'imgs_anotated'
+os.makedirs(output_dir, exist_ok=True)
+output_path = os.path.join(output_dir, 'annotated_' + os.path.basename(image_path))
+image.save(output_path)

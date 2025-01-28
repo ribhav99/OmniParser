@@ -269,12 +269,164 @@ def remove_overlap(boxes, iou_threshold, ocr_bbox=None):
                 filtered_boxes.append(box1)
     return torch.tensor(filtered_boxes)
 
+# Original
+# def remove_overlap_new(boxes, iou_threshold, ocr_bbox=None):
+#     '''
+#     ocr_bbox format: [{'type': 'text', 'bbox':[x,y], 'interactivity':False, 'content':str }, ...]
+#     boxes format: [{'type': 'icon', 'bbox':[x,y], 'interactivity':True, 'content':None }, ...]
+
+#     '''
+#     assert ocr_bbox is None or isinstance(ocr_bbox, List)
+
+#     def box_area(box):
+#         return (box[2] - box[0]) * (box[3] - box[1])
+
+#     def intersection_area(box1, box2):
+#         x1 = max(box1[0], box2[0])
+#         y1 = max(box1[1], box2[1])
+#         x2 = min(box1[2], box2[2])
+#         y2 = min(box1[3], box2[3])
+#         return max(0, x2 - x1) * max(0, y2 - y1)
+
+#     def IoU(box1, box2):
+#         intersection = intersection_area(box1, box2)
+#         union = box_area(box1) + box_area(box2) - intersection + 1e-6
+#         if box_area(box1) > 0 and box_area(box2) > 0:
+#             ratio1 = intersection / box_area(box1)
+#             ratio2 = intersection / box_area(box2)
+#         else:
+#             ratio1, ratio2 = 0, 0
+#         return max(intersection / union, ratio1, ratio2)
+
+#     def is_inside(box1, box2):
+#         # return box1[0] >= box2[0] and box1[1] >= box2[1] and box1[2] <= box2[2] and box1[3] <= box2[3]
+#         intersection = intersection_area(box1, box2)
+#         ratio1 = intersection / box_area(box1)
+#         return ratio1 > 0.80
+
+#     # boxes = boxes.tolist()
+#     filtered_boxes = []
+#     if ocr_bbox:
+#         filtered_boxes.extend(ocr_bbox)
+#     # print('ocr_bbox!!!', ocr_bbox)
+#     for i, box1_elem in enumerate(boxes):
+#         box1 = box1_elem['bbox']
+#         is_valid_box = True
+#         for j, box2_elem in enumerate(boxes):
+#             # keep the smaller box
+#             box2 = box2_elem['bbox']
+#             if i != j and IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2):
+#                 is_valid_box = False
+#                 break
+#         if is_valid_box:
+#             # add the following 2 lines to include ocr bbox
+#             if ocr_bbox:
+#                 # keep yolo boxes + prioritize ocr label
+#                 box_added = False
+#                 for box3_elem in ocr_bbox:
+#                     if not box_added:
+#                         box3 = box3_elem['bbox']
+#                         if is_inside(box3, box1): # ocr inside icon
+#                             # box_added = True
+#                             # delete the box3_elem from ocr_bbox
+#                             try:
+#                                 filtered_boxes.append({'type': 'text', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': box3_elem['content']})
+#                                 filtered_boxes.remove(box3_elem)
+#                                 # print('remove ocr bbox:', box3_elem)
+#                             except:
+#                                 continue
+#                             # break
+#                         elif is_inside(box1, box3): # icon inside ocr
+#                             box_added = True
+#                             # try:
+#                             #     filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
+#                             #     filtered_boxes.remove(box3_elem)
+#                             # except:
+#                             #     continue
+#                             break
+#                         else:
+#                             continue
+#                 if not box_added:
+#                     filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
+                            
+#             else:
+#                 filtered_boxes.append(box1)
+#     return filtered_boxes # torch.tensor(filtered_boxes)
+
+# Below prioritises icons instead of text.
+# def remove_overlap_new(boxes, iou_threshold, ocr_bbox=None):
+#     '''
+#     ocr_bbox format: [{'type': 'text', 'bbox':[x,y], 'interactivity':False, 'content':str }, ...]
+#     boxes format: [{'type': 'icon', 'bbox':[x,y], 'interactivity':True, 'content':None }, ...]
+#     '''
+#     assert ocr_bbox is None or isinstance(ocr_bbox, List)
+
+#     def box_area(box):
+#         return (box[2] - box[0]) * (box[3] - box[1])
+
+#     def intersection_area(box1, box2):
+#         x1 = max(box1[0], box2[0])
+#         y1 = max(box1[1], box2[1])
+#         x2 = min(box1[2], box2[2])
+#         y2 = min(box1[3], box2[3])
+#         return max(0, x2 - x1) * max(0, y2 - y1)
+
+#     def IoU(box1, box2):
+#         intersection = intersection_area(box1, box2)
+#         union = box_area(box1) + box_area(box2) - intersection + 1e-6
+#         if box_area(box1) > 0 and box_area(box2) > 0:
+#             ratio1 = intersection / box_area(box1)
+#             ratio2 = intersection / box_area(box2)
+#         else:
+#             ratio1, ratio2 = 0, 0
+#         return max(intersection / union, ratio1, ratio2)
+
+#     def is_inside(box1, box2):
+#         intersection = intersection_area(box1, box2)
+#         ratio1 = intersection / box_area(box1)
+#         return ratio1 > 0.80
+
+#     filtered_boxes = []
+    
+#     # First add YOLO boxes (icons)
+#     for i, box1_elem in enumerate(boxes):
+#         box1 = box1_elem['bbox']
+#         is_valid_box = True
+#         for j, box2_elem in enumerate(boxes):
+#             box2 = box2_elem['bbox']
+#             if i != j and IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2):
+#                 is_valid_box = False
+#                 break
+#         if is_valid_box:
+#             filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
+    
+#     # Then add OCR boxes only if they don't overlap significantly with any icon
+#     if ocr_bbox:
+#         for box3_elem in ocr_bbox:
+#             box3 = box3_elem['bbox']
+#             should_add_text = True
+            
+#             for icon_elem in filtered_boxes:
+#                 icon_box = icon_elem['bbox']
+#                 if is_inside(box3, icon_box):  # if text is inside icon
+#                     should_add_text = False  # skip the text since we prioritize icons
+#                     break
+#                 elif is_inside(icon_box, box3):  # if icon is inside text area
+#                     should_add_text = False  # still skip the text since we prioritize icons
+#                     break
+#                 elif IoU(box3, icon_box) > iou_threshold:  # if there's significant overlap
+#                     should_add_text = False
+#                     break
+            
+#             if should_add_text:
+#                 filtered_boxes.append(box3_elem)
+
+#     return filtered_boxes
 
 def remove_overlap_new(boxes, iou_threshold, ocr_bbox=None):
     '''
     ocr_bbox format: [{'type': 'text', 'bbox':[x,y], 'interactivity':False, 'content':str }, ...]
     boxes format: [{'type': 'icon', 'bbox':[x,y], 'interactivity':True, 'content':None }, ...]
-
     '''
     assert ocr_bbox is None or isinstance(ocr_bbox, List)
 
@@ -299,60 +451,45 @@ def remove_overlap_new(boxes, iou_threshold, ocr_bbox=None):
         return max(intersection / union, ratio1, ratio2)
 
     def is_inside(box1, box2):
-        # return box1[0] >= box2[0] and box1[1] >= box2[1] and box1[2] <= box2[2] and box1[3] <= box2[3]
         intersection = intersection_area(box1, box2)
         ratio1 = intersection / box_area(box1)
         return ratio1 > 0.80
 
-    # boxes = boxes.tolist()
     filtered_boxes = []
-    if ocr_bbox:
-        filtered_boxes.extend(ocr_bbox)
-    # print('ocr_bbox!!!', ocr_bbox)
+    
+    # First handle icon boxes
     for i, box1_elem in enumerate(boxes):
         box1 = box1_elem['bbox']
         is_valid_box = True
+        
+        # Check overlap with other icons
         for j, box2_elem in enumerate(boxes):
-            # keep the smaller box
-            box2 = box2_elem['bbox']
-            if i != j and IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2):
-                is_valid_box = False
-                break
+            if i != j:
+                box2 = box2_elem['bbox']
+                if IoU(box1, box2) > iou_threshold and box_area(box1) > box_area(box2):
+                    is_valid_box = False
+                    break
+        
         if is_valid_box:
-            # add the following 2 lines to include ocr bbox
-            if ocr_bbox:
-                # keep yolo boxes + prioritize ocr label
-                box_added = False
-                for box3_elem in ocr_bbox:
-                    if not box_added:
-                        box3 = box3_elem['bbox']
-                        if is_inside(box3, box1): # ocr inside icon
-                            # box_added = True
-                            # delete the box3_elem from ocr_bbox
-                            try:
-                                filtered_boxes.append({'type': 'text', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': box3_elem['content']})
-                                filtered_boxes.remove(box3_elem)
-                                # print('remove ocr bbox:', box3_elem)
-                            except:
-                                continue
-                            # break
-                        elif is_inside(box1, box3): # icon inside ocr
-                            box_added = True
-                            # try:
-                            #     filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
-                            #     filtered_boxes.remove(box3_elem)
-                            # except:
-                            #     continue
-                            break
-                        else:
-                            continue
-                if not box_added:
-                    filtered_boxes.append({'type': 'icon', 'bbox': box1_elem['bbox'], 'interactivity': True, 'content': None})
-                            
-            else:
-                filtered_boxes.append(box1)
-    return filtered_boxes # torch.tensor(filtered_boxes)
+            filtered_boxes.append(box1_elem)  # Keep the full dictionary
+    
+    # If OCR boxes are present, handle them
+    if ocr_bbox:
+        for box3_elem in ocr_bbox:
+            box3 = box3_elem['bbox']
+            should_add_text = True
+            
+            # Check if text overlaps with any icon
+            for icon_elem in filtered_boxes:
+                icon_box = icon_elem['bbox']
+                if IoU(box3, icon_box) > iou_threshold:
+                    should_add_text = False
+                    break
+            
+            if should_add_text:
+                filtered_boxes.append(box3_elem)  # Add text box if it doesn't overlap
 
+    return filtered_boxes  # Returns list of dictionaries with all metadata
 
 def load_image(image_path: str) -> Tuple[np.array, torch.Tensor]:
     transform = T.Compose(
@@ -444,84 +581,158 @@ def predict_yolo(model, image_path, box_threshold, imgsz, scale_img, iou_thresho
 
     return boxes, conf, phrases
 
+# Original:
+# def get_som_labeled_img(img_path, model=None, BOX_TRESHOLD = 0.01, output_coord_in_ratio=False, ocr_bbox=None, text_scale=0.4, text_padding=5, draw_bbox_config=None, caption_model_processor=None, ocr_text=[], use_local_semantics=True, iou_threshold=0.9,prompt=None, scale_img=False, imgsz=None, batch_size=None, return_shape=False):
+#     """ ocr_bbox: list of xyxy format bbox
+#     """
+#     image_source = Image.open(img_path).convert("RGB")
+#     w, h = image_source.size
+#     if not imgsz:
+#         imgsz = (h, w)
+#     # print('image size:', w, h)
+#     xyxy, logits, phrases = predict_yolo(model=model, image_path=img_path, box_threshold=BOX_TRESHOLD, imgsz=imgsz, scale_img=scale_img, iou_threshold=0.1)
+#     xyxy = xyxy / torch.Tensor([w, h, w, h]).to(xyxy.device)
+#     image_source = np.asarray(image_source)
+#     phrases = [str(i) for i in range(len(phrases))]
 
-def get_som_labeled_img(img_path, model=None, BOX_TRESHOLD = 0.01, output_coord_in_ratio=False, ocr_bbox=None, text_scale=0.4, text_padding=5, draw_bbox_config=None, caption_model_processor=None, ocr_text=[], use_local_semantics=True, iou_threshold=0.9,prompt=None, scale_img=False, imgsz=None, batch_size=None):
+#     # annotate the image with labels
+#     h, w, _ = image_source.shape
+#     if ocr_bbox:
+#         ocr_bbox = torch.tensor(ocr_bbox) / torch.Tensor([w, h, w, h])
+#         ocr_bbox=ocr_bbox.tolist()
+#     else:
+#         print('no ocr bbox!!!')
+#         ocr_bbox = None
+#     # filtered_boxes = remove_overlap(boxes=xyxy, iou_threshold=iou_threshold, ocr_bbox=ocr_bbox)
+#     # starting_idx = len(ocr_bbox)
+#     # print('len(filtered_boxes):', len(filtered_boxes), starting_idx)
+
+#     ocr_bbox_elem = [{'type': 'text', 'bbox':box, 'interactivity':False, 'content':txt} for box, txt in zip(ocr_bbox, ocr_text)]
+#     xyxy_elem = [{'type': 'icon', 'bbox':box, 'interactivity':True, 'content':None} for box in xyxy.tolist()]
+#     filtered_boxes = remove_overlap_new(boxes=xyxy_elem, iou_threshold=iou_threshold, ocr_bbox=ocr_bbox_elem)
+    
+#     # sort the filtered_boxes so that the one with 'content': None is at the end, and get the index of the first 'content': None
+#     filtered_boxes_elem = sorted(filtered_boxes, key=lambda x: x['content'] is None)
+#     # get the index of the first 'content': None
+#     starting_idx = next((i for i, box in enumerate(filtered_boxes_elem) if box['content'] is None), -1)
+#     filtered_boxes = torch.tensor([box['bbox'] for box in filtered_boxes_elem])
+
+    
+#     # get parsed icon local semantics
+#     if use_local_semantics:
+#         caption_model = caption_model_processor['model']
+#         if 'phi3_v' in caption_model.config.model_type: 
+#             parsed_content_icon = get_parsed_content_icon_phi3v(filtered_boxes, ocr_bbox, image_source, caption_model_processor)
+#         else:
+#             parsed_content_icon = get_parsed_content_icon(filtered_boxes, starting_idx, image_source, caption_model_processor, prompt=prompt,batch_size=batch_size)
+#         ocr_text = [f"Text Box ID {i}: {txt}" for i, txt in enumerate(ocr_text)]
+#         icon_start = len(ocr_text)
+#         parsed_content_icon_ls = []
+#         # fill the filtered_boxes_elem None content with parsed_content_icon in order
+#         for i, box in enumerate(filtered_boxes_elem):
+#             if box['content'] is None:
+#                 box['content'] = parsed_content_icon.pop(0)
+#         for i, txt in enumerate(parsed_content_icon):
+#             parsed_content_icon_ls.append(f"Icon Box ID {str(i+icon_start)}: {txt}")
+#         parsed_content_merged = ocr_text + parsed_content_icon_ls
+#     else:
+#         ocr_text = [f"Text Box ID {i}: {txt}" for i, txt in enumerate(ocr_text)]
+#         parsed_content_merged = ocr_text
+
+#     filtered_boxes = box_convert(boxes=filtered_boxes, in_fmt="xyxy", out_fmt="cxcywh")
+
+#     phrases = [i for i in range(len(filtered_boxes))]
+    
+#     # draw boxes
+#     if draw_bbox_config:
+#         annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=filtered_boxes, logits=logits, phrases=phrases, **draw_bbox_config)
+#     else:
+#         annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=filtered_boxes, logits=logits, phrases=phrases, text_scale=text_scale, text_padding=text_padding)
+    
+#     pil_img = Image.fromarray(annotated_frame)
+#     buffered = io.BytesIO()
+#     pil_img.save(buffered, format="PNG")
+#     encoded_image = base64.b64encode(buffered.getvalue()).decode('ascii')
+#     if output_coord_in_ratio:
+#         # h, w, _ = image_source.shape
+#         label_coordinates = {k: [v[0]/w, v[1]/h, v[2]/w, v[3]/h] for k, v in label_coordinates.items()}
+#         assert w == annotated_frame.shape[1] and h == annotated_frame.shape[0]
+
+#     if return_shape:
+#         return encoded_image, label_coordinates, filtered_boxes_elem, imgsz
+#     return encoded_image, label_coordinates, filtered_boxes_elem
+
+def get_som_labeled_img(img_path, model=None, BOX_TRESHOLD = 0.01, output_coord_in_ratio=False, ocr_bbox=None, text_scale=0.4, text_padding=5, draw_bbox_config=None, caption_model_processor=None, ocr_text=[], use_local_semantics=True, iou_threshold=0.9,prompt=None, scale_img=False, imgsz=None, batch_size=None, return_shape=False):
     """ ocr_bbox: list of xyxy format bbox
     """
     image_source = Image.open(img_path).convert("RGB")
     w, h = image_source.size
     if not imgsz:
         imgsz = (h, w)
-    # print('image size:', w, h)
+    
+    # Get YOLO detections
     xyxy, logits, phrases = predict_yolo(model=model, image_path=img_path, box_threshold=BOX_TRESHOLD, imgsz=imgsz, scale_img=scale_img, iou_threshold=0.1)
     xyxy = xyxy / torch.Tensor([w, h, w, h]).to(xyxy.device)
     image_source = np.asarray(image_source)
-    phrases = [str(i) for i in range(len(phrases))]
-
-    # annotate the image with labels
-    h, w, _ = image_source.shape
-    if ocr_bbox:
+    
+    # Create elements for icon boxes
+    xyxy_elem = [{'type': 'icon', 'bbox':box.tolist(), 'interactivity':True, 'content':None} for box in xyxy]
+    
+    # Handle OCR elements if present
+    if ocr_bbox is not None and ocr_text:
         ocr_bbox = torch.tensor(ocr_bbox) / torch.Tensor([w, h, w, h])
-        ocr_bbox=ocr_bbox.tolist()
+        ocr_bbox = ocr_bbox.tolist()
+        ocr_bbox_elem = [{'type': 'text', 'bbox':box, 'interactivity':False, 'content':txt} for box, txt in zip(ocr_bbox, ocr_text)]
     else:
-        print('no ocr bbox!!!')
-        ocr_bbox = None
-    # filtered_boxes = remove_overlap(boxes=xyxy, iou_threshold=iou_threshold, ocr_bbox=ocr_bbox)
-    # starting_idx = len(ocr_bbox)
-    # print('len(filtered_boxes):', len(filtered_boxes), starting_idx)
-
-    ocr_bbox_elem = [{'type': 'text', 'bbox':box, 'interactivity':False, 'content':txt} for box, txt in zip(ocr_bbox, ocr_text)]
-    xyxy_elem = [{'type': 'icon', 'bbox':box, 'interactivity':True, 'content':None} for box in xyxy.tolist()]
+        ocr_bbox_elem = None
+    
+    # Filter overlapping boxes and merge OCR and icon boxes
     filtered_boxes = remove_overlap_new(boxes=xyxy_elem, iou_threshold=iou_threshold, ocr_bbox=ocr_bbox_elem)
     
-    # sort the filtered_boxes so that the one with 'content': None is at the end, and get the index of the first 'content': None
-    filtered_boxes_elem = sorted(filtered_boxes, key=lambda x: x['content'] is None)
-    # get the index of the first 'content': None
-    starting_idx = next((i for i, box in enumerate(filtered_boxes_elem) if box['content'] is None), -1)
-    filtered_boxes = torch.tensor([box['bbox'] for box in filtered_boxes_elem])
-
+    # Extract boxes for icon caption generation
+    icon_boxes = [box['bbox'] for box in filtered_boxes if box['type'] == 'icon']
+    if icon_boxes:
+        icon_boxes_tensor = torch.tensor(icon_boxes)
+        
+        # Get parsed icon local semantics
+        if use_local_semantics and caption_model_processor:
+            caption_model = caption_model_processor['model']
+            if 'phi3_v' in caption_model.config.model_type: 
+                parsed_content_icon = get_parsed_content_icon_phi3v(icon_boxes_tensor, None, image_source, caption_model_processor)
+            else:
+                parsed_content_icon = get_parsed_content_icon(icon_boxes_tensor, 0, image_source, caption_model_processor, prompt=prompt,batch_size=batch_size)
+            
+            # Update icon descriptions
+            icon_idx = 0
+            for box in filtered_boxes:
+                if box['type'] == 'icon':
+                    box['content'] = parsed_content_icon[icon_idx]
+                    icon_idx += 1
     
-    # get parsed icon local semantics
-    if use_local_semantics:
-        caption_model = caption_model_processor['model']
-        if 'phi3_v' in caption_model.config.model_type: 
-            parsed_content_icon = get_parsed_content_icon_phi3v(filtered_boxes, ocr_bbox, image_source, caption_model_processor)
-        else:
-            parsed_content_icon = get_parsed_content_icon(filtered_boxes, starting_idx, image_source, caption_model_processor, prompt=prompt,batch_size=batch_size)
-        ocr_text = [f"Text Box ID {i}: {txt}" for i, txt in enumerate(ocr_text)]
-        icon_start = len(ocr_text)
-        parsed_content_icon_ls = []
-        # fill the filtered_boxes_elem None content with parsed_content_icon in order
-        for i, box in enumerate(filtered_boxes_elem):
-            if box['content'] is None:
-                box['content'] = parsed_content_icon.pop(0)
-        for i, txt in enumerate(parsed_content_icon):
-            parsed_content_icon_ls.append(f"Icon Box ID {str(i+icon_start)}: {txt}")
-        parsed_content_merged = ocr_text + parsed_content_icon_ls
-    else:
-        ocr_text = [f"Text Box ID {i}: {txt}" for i, txt in enumerate(ocr_text)]
-        parsed_content_merged = ocr_text
-
-    filtered_boxes = box_convert(boxes=filtered_boxes, in_fmt="xyxy", out_fmt="cxcywh")
-
-    phrases = [i for i in range(len(filtered_boxes))]
+    # Prepare boxes for drawing
+    all_boxes_tensor = torch.tensor([box['bbox'] for box in filtered_boxes])
+    all_boxes_cxcywh = box_convert(boxes=all_boxes_tensor, in_fmt="xyxy", out_fmt="cxcywh")
+    phrases = [str(i) for i in range(len(filtered_boxes))]
     
-    # draw boxes
+    # Draw boxes
     if draw_bbox_config:
-        annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=filtered_boxes, logits=logits, phrases=phrases, **draw_bbox_config)
+        annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=all_boxes_cxcywh, logits=logits, phrases=phrases, **draw_bbox_config)
     else:
-        annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=filtered_boxes, logits=logits, phrases=phrases, text_scale=text_scale, text_padding=text_padding)
+        annotated_frame, label_coordinates = annotate(image_source=image_source, boxes=all_boxes_cxcywh, logits=logits, phrases=phrases, text_scale=text_scale, text_padding=text_padding)
     
+    # Encode the image
     pil_img = Image.fromarray(annotated_frame)
     buffered = io.BytesIO()
     pil_img.save(buffered, format="PNG")
     encoded_image = base64.b64encode(buffered.getvalue()).decode('ascii')
+    
     if output_coord_in_ratio:
-        # h, w, _ = image_source.shape
         label_coordinates = {k: [v[0]/w, v[1]/h, v[2]/w, v[3]/h] for k, v in label_coordinates.items()}
         assert w == annotated_frame.shape[1] and h == annotated_frame.shape[0]
 
-    return encoded_image, label_coordinates, filtered_boxes_elem
+    if return_shape:
+        return encoded_image, label_coordinates, filtered_boxes, (h, w)
+    return encoded_image, label_coordinates, filtered_boxes
 
 
 def get_xywh(input):
